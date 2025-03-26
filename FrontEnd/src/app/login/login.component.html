@@ -28,6 +28,7 @@
 
       <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
 
-      <p>Don't have an account? <a [routerLink]="['/register']">Register here</a></p>
+      <p style="margin-left: 15%;">Don't have an account? <a [routerLink]="['/register']" >Register here</a></p>
+      <p>Did you forget your password? <a [routerLink]="['/forgot-password']">Forgot password</a></p>
     </form>
 </div>
