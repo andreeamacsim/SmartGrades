@@ -1,0 +1,36 @@
+<div class="grades-container">
+  
+    <div class="overall-summary">
+      <h2>Overall GPA: {{ overallGPA | number:'1.2-2' }}%</h2>
+    </div>
+  
+    <div *ngFor="let course of courseGrades" class="course-section">
+      <div class="course-header">
+        <h3>{{ course.courseName }}</h3>
+        <span class="course-average">
+          Course Average: {{ course.courseAverage | number:'1.2-2' }}%
+        </span>
+      </div>
+  
+      <table class="grades-table">
+        <thead>
+          <tr>
+            <th>Assignment</th>
+            <th>Score</th>
+            <th>Max Score</th>
+            <th>Percentage</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let grade of course.grades">
+            <td>{{ grade.assignmentName }}</td>
+            <td>{{ grade.score }}</td>
+            <td>{{ grade.maxScore }}</td>
+            <td>{{ (grade.score / grade.maxScore * 100) | number:'1.2-2' }}%</td>
+            <td>{{ grade.gradedDate | date:'mediumDate' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
