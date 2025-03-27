@@ -1,0 +1,96 @@
+<div class="container">
+    <h1>Teacher grade dashboard</h1>
+    
+    <div class="form-container">
+      <form [formGroup]="gradeEntryForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <div class="form-column">
+            <label class="form-label" for="studentId">Select student</label>
+            <select id="studentId" formControlName="studentId" class="form-select" style="margin-bottom: 5%;">
+              <option value="">Select a student</option>
+              <option *ngFor="let student of students" [value]="student.id">
+                {{ student.firstName }} {{ student.lastName }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-column">
+            <label class="form-label" for="courseId">Select course</label>
+            <select id="courseId" formControlName="courseId" class="form-select">
+              <option value="">Select a course</option>
+              <option *ngFor="let course of courses" [value]="course.id">
+                {{ course.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="assignmentName">Assignment name</label>
+          <input type="text" id="assignmentName" formControlName="assignmentName" class="form-input" style="width:95%">
+        </div>
+        
+        <div class="form-row">
+          <div class="form-column">
+            <label class="form-label" for="score">Score</label>
+            <input type="number" id="score" formControlName="score" class="form-input" style="width:90%; margin-bottom: 5%;">
+          </div>
+          
+          <div class="form-column">
+            <label class="form-label" for="maxScore">Max score</label>
+            <input type="number" id="maxScore" formControlName="maxScore" class="form-input" style="width:90%">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="gradedDate">Graded date</label>
+          <input type="date" id="gradedDate" formControlName="gradedDate" class="form-input" style="width:95%">
+        </div>
+        
+        <div class="button-container">
+          <button type="submit" class="submit-button" [disabled]="gradeEntryForm.invalid">
+            {{ editingGrade ? 'Update Grade' : 'Submit Grade' }}
+          </button>
+          <button *ngIf="editingGrade" type="button" class="cancel-button" (click)="cancelEdit()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <section class="recent-grades-section">
+      <h2 class="recent-grades-title">Recently added grades</h2>
+      
+      <table class="grade-table">
+        <thead class="table-header">
+          <tr>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Assignment</th>
+            <th>Score</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let grade of recentGrades" class="table-row">
+            <td>{{ getStudentName(grade.studentId) }}</td>
+            <td>{{ getCourseName(grade.courseId) }}</td>
+            <td>{{ grade.assignmentName }}</td>
+            <td>{{ grade.score }}/{{ grade.maxScore }}</td>
+            <td>{{ grade.gradedDate | date:'mediumDate' }}</td>
+            <td>
+              <div class="action-buttons">
+                <button class="edit-button" (click)="editGrade(grade)">
+                  Edit
+                </button>
+                <button class="delete-button" (click)="deleteGrade(grade)">
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
