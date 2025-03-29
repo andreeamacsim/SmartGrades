@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 interface Student {
   id: number;
@@ -26,7 +27,7 @@ interface GradeEntry {
 @Component({
   selector: 'app-teacher-dashboard',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './teacher-dashboard.component.html',
   styleUrl: './teacher-dashboard.component.css'
 })

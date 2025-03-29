@@ -4,6 +4,7 @@ import { RegisterComponent } from './register/register.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { StudentDashboardComponent } from './student-dashboard/student-dashboard.component';
 import { TeacherDashboardComponent } from './teacher-dashboard/teacher-dashboard.component';
+import { ClassManagementComponent } from './class-management/class-management.component';
 
 
 export const routes: Routes = [
@@ -12,6 +13,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent},
   { path: 'student-dashboard', component:StudentDashboardComponent},
-  { path: 'teacher-dashboard', component:TeacherDashboardComponent}
+  { path: 'teacher-dashboard', component:TeacherDashboardComponent},
+  { path: 'class-management', component: ClassManagementComponent }
 
 ];

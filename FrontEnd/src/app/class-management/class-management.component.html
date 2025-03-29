@@ -1,0 +1,75 @@
+<div class="container">
+    <h1>Class management</h1>
+    
+    <div class="navigation-buttons">
+      <button class="nav-button" routerLink="/teacher-dashboard">Back to Dashboard</button>
+    </div>
+    
+    <div class="management-container">
+      <div class="form-container">
+        <h2>Add Student to Class</h2>
+        <form [formGroup]="enrollmentForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label class="form-label" for="courseId">Select course</label>
+            <select id="courseId" formControlName="courseId" class="form-select">
+              <option value="">Select a course</option>
+              <option *ngFor="let course of courses" [value]="course.id">
+                {{ course.name }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="studentId">Select student</label>
+            <select id="studentId" formControlName="studentId" class="form-select">
+              <option value="">Select a student</option>
+              <option *ngFor="let student of students" [value]="student.id">
+                {{ student.firstName }} {{ student.lastName }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="button-container">
+            <button type="submit" class="submit-button" [disabled]="enrollmentForm.invalid">
+              Add to class
+            </button>
+          </div>
+        </form>
+      </div>
+      
+      <div class="enrollments-container">
+        <h2>Class enrollments</h2>
+        
+        <div class="filter-container">
+          <label>Filter by course:</label>
+          <select class="course-filter" (change)="onCourseFilterChange($event)">
+            <option value="">All courses</option>
+            <option *ngFor="let course of courses" [value]="course.id">
+              {{ course.name }}
+            </option>
+          </select>
+        </div>
+        
+        <table class="enrollment-table">
+          <thead class="table-header">
+            <tr>
+              <th>Student</th>
+              <th>Course</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let enrollment of getEnrolledStudents()" class="table-row">
+              <td>{{ getStudentName(enrollment.studentId) }}</td>
+              <td>{{ getCourseName(enrollment.courseId) }}</td>
+              <td>
+                <button class="delete-button" (click)="removeEnrollment(enrollment)">
+                  Remove
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
