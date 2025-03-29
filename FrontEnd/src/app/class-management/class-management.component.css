@@ -1,17 +1,18 @@
 .container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 2rem auto;
+    padding: 2.5rem;
+    font-family: Arial, sans-serif;
     background-color: #ffffff;
     border-radius: 16px;
     box-shadow: 
         0 15px 35px rgba(92, 52, 178, 0.1), 
         0 5px 15px rgba(92, 52, 178, 0.05);
-    padding: 2.5rem;
     position: relative;
     overflow: hidden;
-}
-
-.container::before {
+  }
+  
+  .container::before {
     content: '';
     position: absolute;
     top: -50%;
@@ -26,9 +27,9 @@
     transform: rotate(-45deg);
     z-index: 1;
     pointer-events: none;
-}
-
-h1 {
+  }
+  
+  h1 {
     color: #5c34b2;
     text-align: center;
     font-size: 2.0rem;
@@ -38,9 +39,9 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-h1::after {
+  }
+  
+  h1::after {
     content: '';
     position: absolute;
     bottom: -10px;
@@ -50,129 +51,17 @@ h1::after {
     height: 4px;
     background: linear-gradient(to right, #5c34b2, #8a4fff);
     border-radius: 2px;
-}
-
-.form-container {
-    background: linear-gradient(
-        to bottom right, 
-        #f8f4ff, 
-        #f0e6ff
-    );
-    border: 1px solid rgba(138, 79, 255, 0.2);
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 
-        0 10px 20px rgba(92, 52, 178, 0.05),
-        inset 0 0 15px rgba(138, 79, 255, 0.05);
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-    position: relative;
-}
-
-.form-label {
-    color: #5c34b2;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    display: block;
-    transition: color 0.3s ease;
-}
-
-.form-select, 
-.form-input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 2px solid rgba(138, 79, 255, 0.3);
-    border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.7);
-    transition: all 0.3s ease;
-    font-size: 1rem;
-}
-
-.form-select:focus, 
-.form-input:focus {
-    border-color: #5c34b2;
-    box-shadow: 0 0 0 3px rgba(92, 52, 178, 0.1);
-    outline: none;
-}
-
-.form-row {
-    display: flex;
-    gap: 1rem;
-}
-
-.form-column {
-    flex: 1;
-}
-
-.button-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
-    gap: 1rem;
-}
-
-.submit-button {
-    background: linear-gradient(to right, #5c34b2, #8a4fff);
-    color: white;
-    border: none;
-    padding: 0.875rem 2rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 10px 20px rgba(92, 52, 178, 0.2);
-}
-
-.submit-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        120deg, 
-        transparent, 
-        rgba(255,255,255,0.3), 
-        transparent
-    );
-    transition: all 0.3s ease;
-}
-
-.submit-button:hover::before {
-    left: 100%;
-}
-
-.submit-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 25px rgba(92, 52, 178, 0.15);
-}
-
-.submit-button:disabled {
-    background: linear-gradient(to right, #c4b5fd, #d8c4fe);
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-.recent-grades-section {
-    margin-top: 2.5rem;
-}
-
-.recent-grades-title {
+  }
+  
+  h2 {
     color: #5c34b2;
     font-size: 1.75rem;
     margin-bottom: 1.5rem;
     position: relative;
     padding-left: 1rem;
-}
-
-.recent-grades-title::before {
+  }
+  
+  h2::before {
     content: '';
     position: absolute;
     left: 0;
@@ -182,116 +71,17 @@ h1::after {
     height: 80%;
     background: linear-gradient(to bottom, #5c34b2, #8a4fff);
     border-radius: 3px;
-}
-
-.grade-table {
-    width: 100%;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 10px 25px rgba(92, 52, 178, 0.1);
-}
-
-.table-header {
-    background: linear-gradient(to right, #ded0fd, #8a4fff);
-    color: white;
-}
-
-.table-header th {
-    padding: 1.25rem 1rem;
-    text-align: left;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.table-row {
-    transition: all 0.3s ease;
-}
-
-.table-row:nth-child(even) {
-    background-color: #f4f3ff;
-}
-
-.table-row:hover {
-    background-color: #e6d6ff;
-    transform: scale(1.01);
-}
-
-.table-row td {
-    padding: 1.25rem 1rem;
-    border-bottom: 1px solid rgba(138, 79, 255, 0.1);
-}
-
-/* New styles for Edit and Delete buttons */
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.edit-button,
-.delete-button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
-}
-
-.edit-button {
-    background: linear-gradient(to right, #5ad95f, #4ece54);
-    color: white;
-}
-
-.edit-button:hover {
-    background: linear-gradient(to right, #45a049, #66bb6a);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
-}
-
-.delete-button {
-    background: linear-gradient(to right, #f47a71, #f67876);
-    color: white;
-}
-
-.delete-button:hover {
-    background: linear-gradient(to right, #d32f2f, #f44336);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(244, 67, 54, 0.3);
-}
-
-.cancel-button {
-    background: linear-gradient(to right, #9E9E9E, #BDBDBD);
-    color: white;
-    padding: 0.875rem 2rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.cancel-button:hover {
-    background: linear-gradient(to right, #757575, #9E9E9E);
-    transform: translateY(-3px);
-}
-
-.navigation-buttons {
+  }
+  
+  .navigation-buttons {
     display: flex;
     justify-content: flex-start;
     margin-bottom: 20px;
-    margin-left: 80%;
     gap: 1rem;
   }
   
   .nav-button {
-    background: linear-gradient(to right, #9d6fff, #8a4fff);
+    background: linear-gradient(to right, #5c34b2, #8a4fff);
     color: white;
     padding: 0.75rem 1.25rem;
     border: none;
@@ -302,7 +92,7 @@ h1::after {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(92, 52, 178, 0.15);
+    box-shadow: 0 10px 20px rgba(92, 52, 178, 0.2);
   }
   
   .nav-button::before {
@@ -327,5 +117,207 @@ h1::after {
   
   .nav-button:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(92, 52, 178, 0.2);
+    box-shadow: 0 15px 25px rgba(92, 52, 178, 0.15);
+  }
+  
+  .management-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .form-container {
+    background: linear-gradient(
+      to bottom right, 
+      #f8f4ff, 
+      #f0e6ff
+    );
+    border: 1px solid rgba(138, 79, 255, 0.2);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 
+      0 10px 20px rgba(92, 52, 178, 0.05),
+      inset 0 0 15px rgba(138, 79, 255, 0.05);
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  
+  .form-label {
+    color: #5c34b2;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: block;
+    transition: color 0.3s ease;
+  }
+  
+  .form-select, 
+  .course-filter {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid rgba(138, 79, 255, 0.3);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.7);
+    transition: all 0.3s ease;
+    font-size: 1rem;
+  }
+  
+  .form-select:focus, 
+  .course-filter:focus {
+    border-color: #5c34b2;
+    box-shadow: 0 0 0 3px rgba(92, 52, 178, 0.1);
+    outline: none;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    gap: 1rem;
+  }
+  
+  .submit-button {
+    background: linear-gradient(to right, #5c34b2, #8a4fff);
+    color: white;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(92, 52, 178, 0.2);
+  }
+  
+  .submit-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      120deg, 
+      transparent, 
+      rgba(255,255,255,0.3), 
+      transparent
+    );
+    transition: all 0.3s ease;
+  }
+  
+  .submit-button:hover::before {
+    left: 100%;
+  }
+  
+  .submit-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 25px rgba(92, 52, 178, 0.15);
+  }
+  
+  .submit-button:disabled {
+    background: linear-gradient(to right, #c4b5fd, #d8c4fe);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .enrollments-container {
+    background: linear-gradient(
+      to bottom right, 
+      #f8f4ff, 
+      #f0e6ff
+    );
+    border: 1px solid rgba(138, 79, 255, 0.2);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 
+      0 10px 20px rgba(92, 52, 178, 0.05),
+      inset 0 0 15px rgba(138, 79, 255, 0.05);
+  }
+  
+  .filter-container {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .enrollment-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(92, 52, 178, 0.1);
+  }
+  
+  .table-header {
+    background: linear-gradient(to right, #ded0fd, #8a4fff);
+    color: white;
+  }
+  
+  .table-header th {
+    padding: 1.25rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .table-row {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(138, 79, 255, 0.1);
+  }
+  
+  .table-row:nth-child(even) {
+    background-color: #f4f3ff;
+  }
+  
+  .table-row:hover {
+    background-color: #e6d6ff;
+    transform: scale(1.01);
+  }
+  
+  .table-row td {
+    padding: 1.25rem 1rem;
+  }
+  
+  .delete-button {
+    background: linear-gradient(to right, #f47a71, #f67876);
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+  
+  .delete-button:hover {
+    background: linear-gradient(to right, #d32f2f, #f44336);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(244, 67, 54, 0.3);
+  }
+  
+  @media (min-width: 768px) {
+    .management-container {
+      flex-direction: row;
+    }
+    
+    .form-container {
+      flex: 1;
+    }
+    
+    .enrollments-container {
+      flex: 2;
+    }
   }
