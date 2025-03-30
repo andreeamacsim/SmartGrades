@@ -54,10 +54,10 @@ namespace BackEnd.Service
             if (id == null)
                 return false;
             entity.Id = id;
-            var results = await _tasks.ReplaceOneAsync(task => task.Id == id, entity);
+            var results = await _students.ReplaceOneAsync(student => student.Id.ToString() == id, entity);
             if (!results.IsAcknowledged && results.ModifiedCount == 0)
             {
-                await _tasks.InsertOneAsync(entity);
+                await _students.InsertOneAsync(entity);
                 return false;
             }
             return true;

@@ -1,6 +1,8 @@
-﻿namespace BackEnd.Service
+﻿using BackEnd.Models;
+
+namespace BackEnd.Service
 {
-    public interface ICourseCollectionService
+    public interface ICourseCollectionService :ICollectionService<Course>
     {
     }
 }
