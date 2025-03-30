@@ -2,5 +2,12 @@
 {
     public class Course
     {
+        public string Id { get; set; }
+
+        public string Name { get; set; }
+
+        public List<string> TeacherIds { get; set; } = new List<string>();
+
+        public List<string> StudentIds { get; set; } = new List<string>(); 
     }
 }

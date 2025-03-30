@@ -1,6 +1,11 @@
 ﻿namespace BackEnd.Models
 {
-    public class User
+    public interface IUser
     {
+        string Id { get; set; }
+
+        string Username { get; set; }
+        string Email { get; set; }
+        string Password { get; set; }
     }
 }
