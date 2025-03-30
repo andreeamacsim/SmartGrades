@@ -1,6 +1,16 @@
-﻿namespace BackEnd.Models
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+
+namespace BackEnd.Models
 {
-    public class User
+    public interface IUser
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        string Id { get; set; }
+
+        string Username { get; set; }
+        string Email { get; set; }
+        string Password { get; set; }
     }
 }
