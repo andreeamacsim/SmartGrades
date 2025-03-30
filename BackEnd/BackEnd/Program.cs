@@ -1,4 +1,5 @@
 using System.Text.Json;
+using BackEnd.Service;
 using BackEnd.Settings;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
@@ -16,8 +17,11 @@ BsonSerializer.TryRegisterSerializer(new GuidSerializer(MongoDB.Bson.GuidReprese
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection(nameof(MongoDbSettings)));
 builder.Services.AddSingleton<IMongoDbSettings>(sp =>
     sp.GetRequiredService<IOptions<MongoDbSettings>>().Value);
+builder.Services.AddSingleton<ICourseCollectionService, CourseCollectionService>();
+builder.Services.AddSingleton<IGradeCollectionService, GradeCollectionService>();
+builder.Services.AddSingleton<ITeacherCollectionService, TeacherCollectionService>();
+builder.Services.AddSingleton<IStudentCollectionService, StudentCollectionService>();
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
