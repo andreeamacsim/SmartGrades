@@ -45,11 +45,20 @@ namespace BackEnd.Service
             return await result.FirstOrDefaultAsync();
         }
 
+        public async Task<List<Course>> GetTeacherCoursesList(string teacherId)
+        {
+            var cursor = await _courses.FindAsync(course => course.Teachers.Any(teacher => teacher.Id == teacherId));
+            var results = await cursor.ToListAsync();
+            return results;
+        }
+
+
+
         public async Task<bool> HasStudent(string studentId,string courseId)
         {
             var results= (await _courses.FindAsync(course=>course.Id== courseId)).FirstOrDefault();
             if (results == null) return false;
-            var hasStudent=results.StudentIds.FirstOrDefault(student=>student==studentId);
+            var hasStudent=results.Students.FirstOrDefault(student=>student.Id==studentId);
             if (hasStudent==null) return false;
             return true;
 
@@ -59,7 +68,7 @@ namespace BackEnd.Service
         {
             var results = (await _courses.FindAsync(course => course.Id == courseId)).FirstOrDefault();
             if (results == null) return false;
-            var hasTeacher = results.TeacherIds.FirstOrDefault(teacher => teacher == teacherId);
+            var hasTeacher = results.Teachers.FirstOrDefault(teacher => teacher.Id == teacherId);
             if(hasTeacher==null)
                 return false;
             return true;

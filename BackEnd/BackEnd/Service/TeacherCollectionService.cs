@@ -20,7 +20,7 @@ namespace BackEnd.Service
 
         public async Task<bool> AddGrade(Grade grade)
         {
-            if( await _courses.HasTeacher(grade.TeacherId,grade.CourseId)&& await _courses.HasStudent(grade.StudentId,grade.CourseId))
+            if( !await _courses.HasTeacher(grade.TeacherId,grade.CourseId)&& !await _courses.HasStudent(grade.StudentId,grade.CourseId))
             {
                 return false;
             }

@@ -6,18 +6,10 @@ import { Grade } from '../models/grade';
 import { Teacher } from '../models/teacher';
 import { TeacherService } from '../services/teacher.service';
 import { GradeService } from '../services/grade.service';
-
-interface Student {
-  id: number;
-  firstName: string;
-  lastName: string;
-}
-
-interface Course {
-  id: number;
-  name: string;
-}
-
+import { Course } from '../models/course';
+import { CourseService } from '../services/course.service';
+import { AuthService } from '../services/auth.service';
+import { Student } from '../models/student';
 
 
 @Component({
@@ -31,35 +23,46 @@ export class TeacherDashboardComponent implements OnInit {
   gradeEntryForm: FormGroup;
   
   // Dummy Data --TODO : add/ edit/delete the data from database
-  students: Student[] = [
-    { id: 1, firstName: 'Andreea', lastName: 'Macsim' },
-    { id: 2, firstName: 'Mihai', lastName: 'Moisescu' },
-    { id: 3, firstName: 'Claudiu', lastName: 'Rusu' }
+  students:Student[] = [
   ];
   
   courses: Course[] = [
-    { id: 1, name: 'Mathematics' },
-    { id: 2, name: 'Science' },
-    { id: 3, name: 'English Literature' }
   ];
   
   recentGrades: Grade[] = [];
   
   editingGrade: Grade | null = null;
   
-  constructor(private fb: FormBuilder ,private teacherService:TeacherService,private gradeService:GradeService) {
+  constructor(private fb: FormBuilder ,private teacherService:TeacherService,private courseService:CourseService,private authService:AuthService) {
     this.gradeEntryForm = this.fb.group({
       studentId: ['', Validators.required],
       courseId: ['', Validators.required],
       assignmentName: ['', [Validators.required, Validators.minLength(3)]],
       score: ['', [Validators.required, Validators.min(0)]],
-      maxScore: ['', [Validators.required, Validators.min(1)]],
+      maxGrade: ['', [Validators.required, Validators.min(1)]],
       gradedDate: ['', Validators.required]
     });
   }
   
   ngOnInit(): void {
-  }
+    const teacherId = this.authService.authenticatedUser?.id;
+    if (!teacherId) {
+      console.error("Teacher ID is undefined.");
+      return;
+    }
+    
+    this.courseService.getTeacherCourses(teacherId).subscribe({
+      next: courses => {
+        this.courses = courses;
+        this.students = courses.flatMap(course => course.students);
+        console.log(courses);
+        console.log(this.students);
+      },
+      error: err => {
+        console.error("Error fetching courses:", err);
+      }
+    });
+   }
   
   onSubmit() {
     if (this.gradeEntryForm.valid) {
@@ -80,9 +83,9 @@ export class TeacherDashboardComponent implements OnInit {
         const newGrade: Grade = {
           ...formValue,
           id:'',
+          teacherId:this.authService.authenticatedUser?.id,
           gradedDate: new Date(formValue.gradedDate)
         };
-        
         this.teacherService.addGrade(newGrade).subscribe();
       }
       

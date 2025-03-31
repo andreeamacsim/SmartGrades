@@ -9,6 +9,8 @@ import { Grade } from '../models/grade';
 })
 export class TeacherService {
   baseUrl = 'https://localhost:7261/teacher';
+  baseUrlGrade='https://localhost:7261/grade'
+
 
   constructor(private httpClient: HttpClient) { }
 
@@ -24,6 +26,7 @@ export class TeacherService {
   }
   public addGrade(grade:Grade)
   {
-    return this.httpClient.post<boolean>(`${this.baseUrl}/add-grade`,grade);
+    console.log(grade);
+    return this.httpClient.post<boolean>(`${this.baseUrlGrade}/add-grade`,grade);
   }
 }
