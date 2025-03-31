@@ -45,6 +45,35 @@ namespace BackEnd.Service
             return await result.FirstOrDefaultAsync();
         }
 
+        public async Task<List<Course>> GetTeacherCoursesList(string teacherId)
+        {
+            var cursor = await _courses.FindAsync(course => course.Teachers.Any(teacher => teacher.Id == teacherId));
+            var results = await cursor.ToListAsync();
+            return results;
+        }
+
+
+
+        public async Task<bool> HasStudent(string studentId,string courseId)
+        {
+            var results= (await _courses.FindAsync(course=>course.Id== courseId)).FirstOrDefault();
+            if (results == null) return false;
+            var hasStudent=results.Students.FirstOrDefault(student=>student.Id==studentId);
+            if (hasStudent==null) return false;
+            return true;
+
+        }
+
+        public async Task<bool> HasTeacher(string teacherId, string courseId)
+        {
+            var results = (await _courses.FindAsync(course => course.Id == courseId)).FirstOrDefault();
+            if (results == null) return false;
+            var hasTeacher = results.Teachers.FirstOrDefault(teacher => teacher.Id == teacherId);
+            if(hasTeacher==null)
+                return false;
+            return true;
+        }
+
         public async Task<bool> Update(string id, Course entity)
         {
             if (string.IsNullOrEmpty(id))

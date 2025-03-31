@@ -17,6 +17,20 @@ namespace BackEnd.Service
             var database = client.GetDatabase(settings.DatabaseName);
             _students = database.GetCollection<Student>(settings.StudentsCollectionName);
         }
+
+        public async Task<bool> AddGrade(string userId, Grade grade)
+        {
+            if (userId == null || grade == null)
+                return false;
+
+            var user= await GetById(userId);
+            if (user == null)
+                return false;
+            user.Grades.Add(grade);
+            await Update(userId, user);
+            return true;
+        }
+
         public async Task<bool> Create(Student entity)
         {
             if (entity == null)

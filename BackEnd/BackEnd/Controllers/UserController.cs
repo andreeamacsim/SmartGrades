@@ -49,7 +49,7 @@ namespace BackEnd.Controllers
         {
             if (teacher == null)
                 return BadRequest();
-            var user = await studentCollectionService.VerifyAccount(teacher.Username, teacher.Password);
+            var user = await teacherCollectionService.VerifyAccount(teacher.Username, teacher.Password);
             if (user != null)
             {
                 return Ok(user);

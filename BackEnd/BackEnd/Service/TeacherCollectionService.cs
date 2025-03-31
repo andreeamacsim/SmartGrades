@@ -7,12 +7,29 @@ namespace BackEnd.Service
     public class TeacherCollectionService : ITeacherCollectionService
     {
         private readonly IMongoCollection<Teacher> _teachers;
-
-        public TeacherCollectionService(IMongoDbSettings settings)
+        private readonly IStudentCollectionService _students;
+        private readonly ICourseCollectionService _courses;
+        public TeacherCollectionService(IMongoDbSettings settings ,IStudentCollectionService studentCollectionService,ICourseCollectionService courseCollectionService)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
             _teachers = database.GetCollection<Teacher>(settings.TeachersCollectionName);
+            _students = studentCollectionService;
+            _courses = courseCollectionService;
+        }
+
+        public async Task<bool> AddGrade(Grade grade)
+        {
+            if( !await _courses.HasTeacher(grade.TeacherId,grade.CourseId)&& !await _courses.HasStudent(grade.StudentId,grade.CourseId))
+            {
+                return false;
+            }
+            if(string.IsNullOrEmpty(grade.Id))
+                grade.Id = Guid.NewGuid().ToString();
+            var results=await _students.AddGrade(grade.StudentId, grade);
+            if (results)
+                return true;
+            return false;
         }
 
         public async Task<bool> Create(Teacher entity)
