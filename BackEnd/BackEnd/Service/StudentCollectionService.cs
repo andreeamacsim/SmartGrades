@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using BackEnd.Models;
 using BackEnd.Settings;
+using Microsoft.AspNetCore.Identity;
 using MongoDB.Driver;
 using SharpCompress.Common;
 
@@ -12,22 +13,25 @@ namespace BackEnd.Service
 
         public StudentCollectionService(IMongoDbSettings settings)
         {
-            var client=new MongoClient();
-            var database = client.GetDatabase(settings.ConnectionString);
+            var client = new MongoClient(settings.ConnectionString);
+            var database = client.GetDatabase(settings.DatabaseName);
             _students = database.GetCollection<Student>(settings.StudentsCollectionName);
         }
-        public async Task<bool> Create(Student enity)
+        public async Task<bool> Create(Student entity)
         {
-            if (enity == null)
+            if (entity == null)
                 return false;
-            if(enity.Id==Guid.Empty.ToString())
-                enity.Id=Guid.NewGuid().ToString();
 
-            await _students.InsertOneAsync(enity);
+            var existingStudent = await _students.Find(s => s.Username == entity.Username || s.Email == entity.Email).FirstOrDefaultAsync();
 
+            if (existingStudent != null)
+                return false;
+
+            if (entity.Id == Guid.Empty.ToString())
+                entity.Id = Guid.NewGuid().ToString();
+
+            await _students.InsertOneAsync(entity);
             return true;
-            
-
         }
 
         public async Task<bool> Delete(string id)
@@ -61,6 +65,14 @@ namespace BackEnd.Service
                 return false;
             }
             return true;
+        }
+
+        public async Task<Student> VerifyAccount(string username, string password)
+        {
+            var student = (await _students.FindAsync(stundent => stundent.Username == username && stundent.Password == password)).FirstOrDefault();
+            if (student == null)
+                return null;
+            return student;
         }
     }
 }

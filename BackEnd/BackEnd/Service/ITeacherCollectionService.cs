@@ -2,7 +2,9 @@
 
 namespace BackEnd.Service
 {
-    public interface ITeacherCollectionService :ICollectionService<Teacher>
+    public interface ITeacherCollectionService : ICollectionService<Teacher>
     {
+        Task<Teacher> VerifyAccount(string username, string password);
+
     }
 }
