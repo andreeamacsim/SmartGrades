@@ -6,6 +6,7 @@ import { StudentDashboardComponent } from './student-dashboard/student-dashboard
 import { TeacherDashboardComponent } from './teacher-dashboard/teacher-dashboard.component';
 import { ClassManagementComponent } from './class-management/class-management.component';
 import { TeacherProfileComponent } from './teacher-profile/teacher-profile.component';
+import { StudentProfileComponent } from './student-profile/student-profile.component';
 
 
 export const routes: Routes = [
@@ -16,6 +17,7 @@ export const routes: Routes = [
   { path: 'student-dashboard', component:StudentDashboardComponent},
   { path: 'teacher-dashboard', component:TeacherDashboardComponent},
   { path: 'class-management', component: ClassManagementComponent },
-  { path: 'teacher-profile', component: TeacherProfileComponent }
+  { path: 'teacher-profile', component: TeacherProfileComponent },
+  { path: 'student-profile', component:StudentProfileComponent}
 
 ];
