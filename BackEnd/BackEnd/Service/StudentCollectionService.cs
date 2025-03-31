@@ -27,7 +27,7 @@ namespace BackEnd.Service
             if (existingStudent != null)
                 return false;
 
-            if (entity.Id == Guid.Empty.ToString())
+            if (string.IsNullOrEmpty(entity.Id))
                 entity.Id = Guid.NewGuid().ToString();
 
             await _students.InsertOneAsync(entity);
@@ -51,6 +51,19 @@ namespace BackEnd.Service
         public async Task<Student> GetById(string id)
         {
             return (await _students.FindAsync(student => student.Id.ToString() == id)).FirstOrDefault();
+        }
+
+        public async Task<List<Grade>> GetGrades(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return null;
+            var results=(await _students.FindAsync(student=>student.Id == id)).FirstOrDefault();
+            if(results!=null)
+            {
+                var grades=results.Grades;
+                return grades;
+            }
+            return null;
         }
 
         public async Task<bool> Update(string id, Student entity)

@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private authenticatedUser: Student | Teacher | null = null;
+  authenticatedUser: Student | Teacher | null = null;
   baseUrlTeacher = 'https://localhost:7261/teacher/authenticate';
   baseUrlStudent = 'https://localhost:7261/student/authenticate';
 

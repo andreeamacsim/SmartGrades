@@ -2,15 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { GradeService } from '../services/grade.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { Grade } from '../models/grade';
 
-interface Grade {
-  courseId: number;
-  courseName: string;
-  assignmentName: string;
-  score: number;
-  maxScore: number;
-  gradedDate: Date;
-}
 
 interface CourseGrades {
   courseName: string;
@@ -27,18 +21,23 @@ interface CourseGrades {
 })
 export class StudentDashboardComponent implements OnInit {
 
-  // TODO--- backend for get assignment scores, calculate current average
   courseGrades: CourseGrades[] = [];
   overallGPA: number = 0;
 
-  constructor(private gradeService: GradeService, private router: Router) {}
+  constructor(private gradeService: GradeService, private router: Router,private authService:AuthService) {}
 
   ngOnInit(): void {
     this.loadStudentGrades();
   }
-
   loadStudentGrades() {
-    this.gradeService.getStudentGrades().subscribe({
+    const userId = this.authService.authenticatedUser?.id;
+    
+    if (!userId) {
+      console.error('User ID is undefined. Cannot fetch grades.');
+      return;
+    }
+  
+    this.gradeService.getStudentGrades(userId).subscribe({
       next: (grades: Grade[]) => {
         this.processGrades(grades);
       },
@@ -52,10 +51,10 @@ export class StudentDashboardComponent implements OnInit {
     const courseMap = new Map<string, Grade[]>();
     
     grades.forEach(grade => {
-      if (!courseMap.has(grade.courseName)) {
-        courseMap.set(grade.courseName, []);
+      if (!courseMap.has(grade.courseId)) {
+        courseMap.set(grade.courseId, []);
       }
-      courseMap.get(grade.courseName)!.push(grade);
+      courseMap.get(grade.courseId)!.push(grade);
     });
 
     this.courseGrades = Array.from(courseMap.entries()).map(([courseName, courseGrades]) => {
@@ -74,7 +73,7 @@ export class StudentDashboardComponent implements OnInit {
     if (grades.length === 0) return 0;
     
     const totalScore = grades.reduce((sum, grade) => sum + grade.score, 0);
-    const totalMaxScore = grades.reduce((sum, grade) => sum + grade.maxScore, 0);
+    const totalMaxScore = grades.reduce((sum, grade) => sum + grade.maxGrade, 0);
     
     return totalScore / totalMaxScore * 100;
   }

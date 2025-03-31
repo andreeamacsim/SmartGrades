@@ -5,8 +5,6 @@ namespace BackEnd.Models
 {
     public class Grade
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
         public string CourseId { get; set; }
