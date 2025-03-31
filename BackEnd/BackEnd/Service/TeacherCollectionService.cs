@@ -20,6 +20,11 @@ namespace BackEnd.Service
             if (entity == null)
                 return false;
 
+            var existingTeacher = await _teachers.Find(t => t.Username == entity.Username || t.Email == entity.Email).FirstOrDefaultAsync();
+
+            if (existingTeacher != null)
+                return false;
+
             if (string.IsNullOrEmpty(entity.Id))
                 entity.Id = Guid.NewGuid().ToString();
 
@@ -53,6 +58,13 @@ namespace BackEnd.Service
             entity.Id = id;
             var result = await _teachers.ReplaceOneAsync(teacher => teacher.Id == id, entity);
             return result.IsAcknowledged && result.ModifiedCount > 0;
+        }
+        public async Task<Teacher> VerifyAccount(string username, string password)
+        {
+            var teacher = (await _teachers.FindAsync(teacher => teacher.Username == username && teacher.Password == password)).FirstOrDefault();
+            if (teacher == null)
+                return null;
+            return teacher;
         }
     }
 }

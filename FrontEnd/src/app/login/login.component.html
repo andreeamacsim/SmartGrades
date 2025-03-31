@@ -1,5 +1,24 @@
 <div class="login-container">
+  
     <form (ngSubmit)="onLogin()">
+      <div class="user-type-selector">
+        <div 
+          class="user-type-option" 
+          [class.active]="userType === 'student'"
+          (click)="toggleUserType('student')"
+        >
+          <i class="icon student-icon"></i>
+          <span>Student</span>
+        </div>
+        <div 
+          class="user-type-option" 
+          [class.active]="userType === 'teacher'"
+          (click)="toggleUserType('teacher')"
+        >
+          <i class="icon teacher-icon"></i>
+          <span>Teacher</span>
+        </div>
+      </div>
       <h2>Login</h2>
       <div class="form-group">
         <label for="username">Username</label>
