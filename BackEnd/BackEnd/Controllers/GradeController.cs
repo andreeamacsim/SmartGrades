@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd.Controllers
 {
+    [ApiController]
+    [Route("grade")]
     public class GradeController : ControllerBase
     {
         private readonly IStudentCollectionService _studentCollectionService;
