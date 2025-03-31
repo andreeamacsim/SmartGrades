@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { GradeService } from '../services/grade.service';
+import { Router } from '@angular/router';
 
 interface Grade {
   courseId: number;
@@ -30,7 +31,7 @@ export class StudentDashboardComponent implements OnInit {
   courseGrades: CourseGrades[] = [];
   overallGPA: number = 0;
 
-  constructor(private gradeService: GradeService) {}
+  constructor(private gradeService: GradeService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadStudentGrades();
@@ -83,5 +84,9 @@ export class StudentDashboardComponent implements OnInit {
     
     const averages = this.courseGrades.map(course => course.courseAverage);
     return averages.reduce((sum, avg) => sum + avg, 0) / averages.length;
+  }
+
+  navigateToStudentProfile() {
+    this.router.navigate(['/student-profile']);
   }
 }

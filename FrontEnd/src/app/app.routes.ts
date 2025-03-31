@@ -5,6 +5,8 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
 import { StudentDashboardComponent } from './student-dashboard/student-dashboard.component';
 import { TeacherDashboardComponent } from './teacher-dashboard/teacher-dashboard.component';
 import { ClassManagementComponent } from './class-management/class-management.component';
+import { TeacherProfileComponent } from './teacher-profile/teacher-profile.component';
+import { StudentProfileComponent } from './student-profile/student-profile.component';
 
 
 export const routes: Routes = [
@@ -14,6 +16,8 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent},
   { path: 'student-dashboard', component:StudentDashboardComponent},
   { path: 'teacher-dashboard', component:TeacherDashboardComponent},
-  { path: 'class-management', component: ClassManagementComponent }
+  { path: 'class-management', component: ClassManagementComponent },
+  { path: 'teacher-profile', component: TeacherProfileComponent },
+  { path: 'student-profile', component:StudentProfileComponent}
 
 ];

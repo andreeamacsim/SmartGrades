@@ -286,7 +286,7 @@ h1::after {
     display: flex;
     justify-content: flex-start;
     margin-bottom: 20px;
-    margin-left: 80%;
+    margin-left: 60%;
     gap: 1rem;
   }
   

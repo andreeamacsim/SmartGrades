@@ -146,3 +146,31 @@ body {
     }
   }
   
+  .header-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  
+  .profile-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #6d3089;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+  }
+  
+  .profile-button:hover {
+    background-color: #8722a6;
+  }
+  
+  .profile-button svg {
+    width: 16px;
+    height: 16px;
+  }
