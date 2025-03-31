@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Teacher } from '../models/teacher';
+import { Grade } from '../models/grade';
 
 @Injectable({
   providedIn: 'root'
@@ -20,5 +21,9 @@ export class TeacherService {
       courseIds:[]
     };
     return this.httpClient.post<boolean>(this.baseUrl, teacher);
+  }
+  public addGrade(grade:Grade)
+  {
+    return this.httpClient.post<boolean>(`${this.baseUrl}/add-grade`,grade);
   }
 }

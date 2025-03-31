@@ -24,6 +24,8 @@ namespace BackEnd.Service
             {
                 return false;
             }
+            if(string.IsNullOrEmpty(grade.Id))
+                grade.Id = Guid.NewGuid().ToString();
             var results=await _students.AddGrade(grade.StudentId, grade);
             if (results)
                 return true;
