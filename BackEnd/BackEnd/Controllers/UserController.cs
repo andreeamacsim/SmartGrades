@@ -40,12 +40,9 @@ namespace BackEnd.Controllers
             var user = await studentCollectionService.VerifyAccount(student.Username, student.Password);
             if (user != null)
             {
-                return Ok(new
-                {
-                    Message = "Login succesed!"
-                });
+                return Ok(user);
             }
-            return NotFound(new { Message = "Username or password is incorect" });
+            return NotFound(user);
         }
         [HttpPost("/teacher/authenticate")]
         public async Task<IActionResult> AuthenitcateTeacher([FromBody] VerifyUser teacher)
@@ -55,12 +52,9 @@ namespace BackEnd.Controllers
             var user = await studentCollectionService.VerifyAccount(teacher.Username, teacher.Password);
             if (user != null)
             {
-                return Ok(new
-                {
-                    Message = "Login succesed!"
-                });
-            }
-            return NotFound(new { Message = "Username or password is incorect" });
+                return Ok(user);
+                }
+                return NotFound(user);
         }
     }
 }
