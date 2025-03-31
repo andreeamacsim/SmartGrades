@@ -1,4 +1,5 @@
-﻿using BackEnd.Service;
+﻿using BackEnd.Models;
+using BackEnd.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd.Controllers
@@ -8,9 +9,12 @@ namespace BackEnd.Controllers
     public class GradeController : ControllerBase
     {
         private readonly IStudentCollectionService _studentCollectionService;
-        public GradeController(IStudentCollectionService studentCollectionService)
+        private ITeacherCollectionService _teacherCollectionService;
+
+        public GradeController(IStudentCollectionService studentCollectionService, ITeacherCollectionService teacherCollectionService)
         {
             _studentCollectionService = studentCollectionService;
+            _teacherCollectionService = teacherCollectionService;
         }
 
         [HttpGet("id")]
@@ -20,6 +24,14 @@ namespace BackEnd.Controllers
             if (results == null)
                 return NotFound();
             return Ok(results);
+        }
+        [HttpPost("add-grade")]
+        public async Task<IActionResult> AddGrade([FromBody] Grade grade)
+        {
+            var results= await _teacherCollectionService.AddGrade(grade);
+            if(results)
+                return Ok(results);
+            return BadRequest();
         }
 
     }

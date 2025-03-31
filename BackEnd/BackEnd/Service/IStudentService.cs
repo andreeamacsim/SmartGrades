@@ -6,6 +6,7 @@ namespace BackEnd.Service
     {
         Task<Student> VerifyAccount(string username, string password);
         Task<List<Grade>> GetGrades(string id);
+        Task<bool> AddGrade(string userId, Grade grade);
 
     }
 }
