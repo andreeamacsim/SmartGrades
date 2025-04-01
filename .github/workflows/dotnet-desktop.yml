@@ -13,8 +13,8 @@ jobs:
     runs-on: windows-latest  # Use a Windows runner for .NET Core
 
     env:
-      Solution_Name: SmartGrades/BackEnd/BackEnd.sln  # Path to your .sln file
-      Test_Project_Path: SmartGrades/BackEnd/BackEnd.Tests/BackEnd.Tests.csproj  # Path to your test project
+      Solution_Name: BackEnd/BackEnd.sln  # Path to your .sln file
+      Test_Project_Path: BackEnd/BackEnd.Tests/BackEnd.Tests.csproj  # Path to your test project
       Wap_Project_Directory: your-wap-project-directory-name  # Modify if you have a WAP project
       Wap_Project_Path: your-wap-project-path  # Modify if you have a WAP project
 
