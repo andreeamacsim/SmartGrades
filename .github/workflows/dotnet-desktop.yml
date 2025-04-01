@@ -15,8 +15,6 @@ jobs:
     env:
       Solution_Name: BackEnd/BackEnd.sln  # Path to your .sln file
       Test_Project_Path: BackEnd/BackEnd.Tests/BackEnd.Tests.csproj  # Path to your test project
-      Wap_Project_Directory: your-wap-project-directory-name  # Modify if you have a WAP project
-      Wap_Project_Path: your-wap-project-path  # Modify if you have a WAP project
 
     steps:
       # 1. Checkout the source code from the repository
@@ -37,45 +35,18 @@ jobs:
 
       # 4. Restore project dependencies
       - name: Restore dependencies
-        run: dotnet restore ${{ env.Solution_Name }}  # Restore the entire solution
+        run: dotnet restore ${{ env.Solution_Name }}
 
       # 5. Build the solution (to check for compilation errors)
       - name: Build solution
         run: dotnet build ${{ env.Solution_Name }} --configuration ${{ matrix.configuration }}
 
       # 6. Execute unit tests
-      - name: Execute unit tests
+      - name: Execute .NET unit tests
         run: dotnet test ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }}
 
-      # 7. If you have a WAP project, restore the application (modify if you're not using a WAP project)
+      # 7. Restore the application (if needed)
       - name: Restore the application
         run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
         env:
           Configuration: ${{ matrix.configuration }}
-
-      # 8. If you have a signing certificate, decode it and use it for MSIX packages
-      - name: Decode the pfx
-        run: |
-          $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.Base64_Encoded_Pfx }}")
-          $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath GitHubActionsWorkflow.pfx
-          [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
-
-      # 9. Create the app package
-      - name: Create the app package
-        run: msbuild $env:Wap_Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
-        env:
-          Appx_Bundle: Always
-          Appx_Bundle_Platforms: x86|x64
-          Appx_Package_Build_Mode: StoreUpload
-          Configuration: ${{ matrix.configuration }}
-
-      # 10. Remove the certificate after creating the package
-      - name: Remove the pfx
-        run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
-
-      # 11. Upload build artifacts (e.g., MSIX package)
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: MSIX Package
-          path: ${{ env.Wap_Project_Directory }}\AppPackages
