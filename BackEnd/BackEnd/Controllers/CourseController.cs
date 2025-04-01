@@ -31,5 +31,13 @@ namespace BackEnd.Controllers
                 return BadRequest();
             return Ok(results);
         }
+        [HttpGet("students-from-course")]
+        public async Task<IActionResult> GetStudentsFromCourse(string courseId)
+        {
+            var results = await courseCollectionService.GetStudentsFromCourse(courseId);
+            if(results==null)
+                return BadRequest();
+            return Ok(results);
+        }
     }
 }
