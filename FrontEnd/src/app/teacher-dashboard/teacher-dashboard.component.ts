@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Grade } from '../models/grade';
@@ -19,15 +19,11 @@ import { Student } from '../models/student';
   templateUrl: './teacher-dashboard.component.html',
   styleUrl: './teacher-dashboard.component.css'
 })
-export class TeacherDashboardComponent implements OnInit {
+export class TeacherDashboardComponent implements OnInit{
   gradeEntryForm: FormGroup;
+  students:Student[] = [];
   
-  // Dummy Data --TODO : add/ edit/delete the data from database
-  students:Student[] = [
-  ];
-  
-  courses: Course[] = [
-  ];
+  courses: Course[] = [];
   
   recentGrades: Grade[] = [];
   
@@ -51,12 +47,23 @@ export class TeacherDashboardComponent implements OnInit {
       return;
     }
     
+    this.gradeEntryForm.get('courseId')?.valueChanges.subscribe((courseId) => {
+      if (courseId) {
+        this.courseService.getStudentsFromCourse(courseId).subscribe({
+          next: (students) => {
+            this.students = students; 
+          },
+          error: (err) => {
+            console.error("Error fetching students for the course:", err);
+          }
+        });
+      }
+    });
+
     this.courseService.getTeacherCourses(teacherId).subscribe({
       next: courses => {
         this.courses = courses;
-        this.students = courses.flatMap(course => course.students);
         console.log(courses);
-        console.log(this.students);
       },
       error: err => {
         console.error("Error fetching courses:", err);
