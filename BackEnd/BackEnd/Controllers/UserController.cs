@@ -56,5 +56,21 @@ namespace BackEnd.Controllers
                 }
                 return NotFound(user);
         }
+        [HttpPut("/teacher")]
+        public async Task<IActionResult> UpdateTeacher([FromBody]Teacher teacher)
+        {
+            var results=await teacherCollectionService.Update(teacher.Id,teacher);
+            if(results)
+                return Ok(results);
+            return BadRequest();
+        }
+        [HttpPut("/student")]
+        public async Task<IActionResult> UpdateStudent([FromBody] Student student)
+        {
+            var results = await studentCollectionService.Update(student.Id, student);
+            if (results)
+                return Ok(results);
+            return BadRequest();
+        }
     }
 }
