@@ -45,6 +45,17 @@ namespace BackEnd.Service
             return await result.FirstOrDefaultAsync();
         }
 
+        public async Task<List<Student>> GetStudentsFromCourse(string courseId)
+        {
+            if (string.IsNullOrEmpty(courseId))
+                return null;
+            var course= (await _courses.FindAsync(course=> course.Id == courseId)).FirstOrDefault();
+            if (course == null)
+                return null;
+            var students = course.Students;
+            return students;
+        }
+
         public async Task<List<Course>> GetTeacherCoursesList(string teacherId)
         {
             var cursor = await _courses.FindAsync(course => course.Teachers.Any(teacher => teacher.Id == teacherId));
