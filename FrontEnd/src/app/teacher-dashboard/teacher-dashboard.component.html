@@ -82,11 +82,11 @@
           </tr>
         </thead>
         <tbody>
-          <!-- <tr *ngFor="let grade of recentGrades" class="table-row">
+          <tr *ngFor="let grade of recentGrades" class="table-row">
             <td>{{ getStudentName(grade.studentId) }}</td>
             <td>{{ getCourseName(grade.courseId) }}</td>
             <td>{{ grade.assignmentName }}</td>
-            <td>{{ grade.score }}/{{ grade.maxScore }}</td>
+            <td>{{ grade.score }}/{{ grade.maxGrade }}</td>
             <td>{{ grade.gradedDate | date:'mediumDate' }}</td>
             <td>
               <div class="action-buttons">
@@ -98,7 +98,7 @@
                 </button>
               </div>
             </td>
-          </tr> -->
+          </tr>
         </tbody>
       </table>
     </section>

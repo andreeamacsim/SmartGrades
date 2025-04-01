@@ -129,6 +129,97 @@ namespace BackEnd.Service
             var teacher = (await _teachers.FindAsync(teacher => teacher.Username == username && teacher.Password == password)).FirstOrDefault();
             return teacher;
         }
+
+
+        /// <summary>
+        /// Retrieves all grades assigned by a specific teacher.
+        /// </summary>
+        /// <param name="teacherId">The ID of the teacher whose grades should be retrieved.</param>
+        /// <returns>A collection of grades assigned by the teacher.</returns>
+        public async Task<IEnumerable<Grade>> GetTeacherGrades(string teacherId)
+        {
+            // Assuming grades are stored in students' records
+            var students = await _students.GetAll();
+            var teacherGrades = new List<Grade>();
+
+            foreach (var student in students)
+            {
+                if (student.Grades != null)
+                {
+                    var grades = student.Grades.Where(g => g.TeacherId == teacherId);
+                    teacherGrades.AddRange(grades);
+                }
+            }
+
+            // Sort by most recent grades first
+            return teacherGrades.OrderByDescending(g => g.GradedDate);
+        }
+
+        /// <summary>
+        /// Updates an existing grade.
+        /// </summary>
+        /// <param name="grade">The grade with updated information.</param>
+        /// <returns>True if the grade was updated successfully, otherwise false.</returns>
+        public async Task<bool> UpdateGrade(Grade grade)
+        {
+            if (string.IsNullOrEmpty(grade.Id) || string.IsNullOrEmpty(grade.StudentId))
+                return false;
+
+            // Verify that the teacher has access to this course
+            if (!await _courses.HasTeacher(grade.TeacherId, grade.CourseId))
+                return false;
+
+            // Find the student
+            var student = await _students.GetById(grade.StudentId);
+            if (student == null || student.Grades == null)
+                return false;
+
+            // Find the grade index
+            var gradeIndex = student.Grades.FindIndex(g => g.Id == grade.Id);
+            if (gradeIndex == -1)
+                return false;
+
+            // Update the grade
+            student.Grades[gradeIndex] = grade;
+
+            // Save the updated student record
+            return await _students.Update(student.Id, student);
+        }
+
+        /// <summary>
+        /// Deletes a grade by its ID.
+        /// </summary>
+        /// <param name="gradeId">The ID of the grade to delete.</param>
+        /// <returns>True if the grade was deleted successfully, otherwise false.</returns>
+        public async Task<bool> DeleteGrade(string gradeId)
+        {
+            if (string.IsNullOrEmpty(gradeId))
+                return false;
+
+            // We need to find which student has this grade
+            var students = await _students.GetAll();
+
+            foreach (var student in students)
+            {
+                if (student.Grades != null)
+                {
+                    var gradeToRemove = student.Grades.FirstOrDefault(g => g.Id == gradeId);
+                    if (gradeToRemove != null)
+                    {
+                        // Remove the grade
+                        student.Grades.Remove(gradeToRemove);
+
+                        // Update the student record
+                        return await _students.Update(student.Id, student);
+                    }
+                }
+            }
+
+            return false;
+        }
     }
+
+
+
 }
 
