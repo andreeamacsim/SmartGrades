@@ -29,4 +29,16 @@ export class TeacherService {
     console.log(grade);
     return this.httpClient.post<boolean>(`${this.baseUrlGrade}/add-grade`,grade);
   }
+
+  public getTeacherGrades(teacherId: string): Observable<Grade[]> {
+    return this.httpClient.get<Grade[]>(`${this.baseUrlGrade}/teacher/${teacherId}`);
+  }
+  
+  public updateGrade(grade: Grade): Observable<boolean> {
+    return this.httpClient.put<boolean>(`${this.baseUrlGrade}/update-grade`, grade);
+  }
+  
+  public deleteGrade(gradeId: string): Observable<boolean> {
+    return this.httpClient.delete<boolean>(`${this.baseUrlGrade}/delete-grade/${gradeId}`);
+  }
 }
