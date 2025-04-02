@@ -12,8 +12,8 @@ namespace BackEnd.Service
 
         public StudentCollectionService(IMongoDbSettings settings)
         {
-            var client=new MongoClient();
-            var database = client.GetDatabase(settings.ConnectionString);
+            var client=new MongoClient(settings.ConnectionString);
+            var database = client.GetDatabase(settings.DatabaseName);
             _students = database.GetCollection<Student>(settings.StudentsCollectionName);
         }
         public async Task<bool> Create(Student enity)
