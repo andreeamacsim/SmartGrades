@@ -35,8 +35,8 @@
           <tr *ngFor="let grade of course.grades">
             <td>{{ grade.assignmentName }}</td>
             <td>{{ grade.score }}</td>
-            <td>{{ grade.maxScore }}</td>
-            <td>{{ (grade.score / grade.maxScore * 100) | number:'1.2-2' }}%</td>
+            <td>{{ grade.maxGrade }}</td>
+            <td>{{ (grade.score / grade.maxGrade * 100) | number:'1.2-2' }}%</td>
             <td>{{ grade.gradedDate | date:'mediumDate' }}</td>
           </tr>
         </tbody>

@@ -1,28 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { Grade } from '../models/grade';
+import { Teacher } from '../models/teacher';
+import { TeacherService } from '../services/teacher.service';
+import { GradeService } from '../services/grade.service';
+import { Course } from '../models/course';
+import { CourseService } from '../services/course.service';
+import { AuthService } from '../services/auth.service';
+import { Student } from '../models/student';
 
-interface Student {
-  id: number;
-  firstName: string;
-  lastName: string;
-}
-
-interface Course {
-  id: number;
-  name: string;
-}
-
-interface GradeEntry {
-  id?: number; 
-  studentId: number;
-  courseId: number;
-  assignmentName: string;
-  score: number;
-  maxScore: number;
-  gradedDate: Date;
-}
 
 @Component({
   selector: 'app-teacher-dashboard',
@@ -33,115 +21,181 @@ interface GradeEntry {
 })
 export class TeacherDashboardComponent implements OnInit {
   gradeEntryForm: FormGroup;
+  students: Student[] = [];
+  courses: Course[] = [];
+  recentGrades: Grade[] = [];
+  editingGrade: Grade | null = null;
   
-  // Dummy Data --TODO : add/ edit/delete the data from database
-  students: Student[] = [
-    { id: 1, firstName: 'Andreea', lastName: 'Macsim' },
-    { id: 2, firstName: 'Mihai', lastName: 'Moisescu' },
-    { id: 3, firstName: 'Claudiu', lastName: 'Rusu' }
-  ];
-  
-  courses: Course[] = [
-    { id: 1, name: 'Mathematics' },
-    { id: 2, name: 'Science' },
-    { id: 3, name: 'English Literature' }
-  ];
-  
-  recentGrades: GradeEntry[] = [];
-  
-  editingGrade: GradeEntry | null = null;
-  
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private teacherService: TeacherService,
+    private courseService: CourseService,
+    private authService: AuthService
+  ) {
     this.gradeEntryForm = this.fb.group({
       studentId: ['', Validators.required],
       courseId: ['', Validators.required],
       assignmentName: ['', [Validators.required, Validators.minLength(3)]],
       score: ['', [Validators.required, Validators.min(0)]],
-      maxScore: ['', [Validators.required, Validators.min(1)]],
+      maxGrade: ['', [Validators.required, Validators.min(1)]],
       gradedDate: ['', Validators.required]
     });
   }
   
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const teacherId = this.authService.authenticatedUser?.id;
+    if (!teacherId) {
+      console.error("Teacher ID is undefined.");
+      return;
+    }
+    
+    // Load teacher's courses
+    this.courseService.getTeacherCourses(teacherId).subscribe({
+      next: courses => {
+        this.courses = courses;
+        console.log(courses);
+      },
+      error: err => {
+        console.error("Error fetching courses:", err);
+      }
+    });
+    
+    // Load teacher's recent grades
+    this.loadRecentGrades(teacherId);
+    
+    // Subscribe to course changes to load students
+    this.gradeEntryForm.get('courseId')?.valueChanges.subscribe((courseId) => {
+      if (courseId) {
+        this.courseService.getStudentsFromCourse(courseId).subscribe({
+          next: (students) => {
+            this.students = students; 
+          },
+          error: (err) => {
+            console.error("Error fetching students for the course:", err);
+          }
+        });
+      }
+    });
+  }
+  
+  loadRecentGrades(teacherId: string): void {
+    this.teacherService.getTeacherGrades(teacherId).subscribe({
+      next: (grades) => {
+        this.recentGrades = grades;
+      },
+      error: (err) => {
+        console.error("Error fetching recent grades:", err);
+      }
+    });
+  }
   
   onSubmit() {
     if (this.gradeEntryForm.valid) {
       const formValue = this.gradeEntryForm.value;
+      const teacherId = this.authService.authenticatedUser?.id;
+      
+      if (!teacherId) {
+        console.error("Teacher ID is undefined.");
+        return;
+      }
       
       if (this.editingGrade) {
-        const index = this.recentGrades.findIndex(g => g.id === this.editingGrade?.id);
-        if (index !== -1) {
-          this.recentGrades[index] = {
-            ...this.editingGrade,
-            ...formValue,
-            gradedDate: new Date(formValue.gradedDate)
-          };
-        }
-        this.editingGrade = null;
-      } else {
-   
-        const newGrade: GradeEntry = {
+        // Update existing grade
+        const updatedGrade: Grade = {
+          ...this.editingGrade,
           ...formValue,
-          id: this.generateUniqueId(),
           gradedDate: new Date(formValue.gradedDate)
         };
         
-        this.recentGrades.unshift(newGrade);
+        this.teacherService.updateGrade(updatedGrade).subscribe({
+          next: (success) => {
+            if (success) {
+              const index = this.recentGrades.findIndex(g => g.id === updatedGrade.id);
+              if (index !== -1) {
+                this.recentGrades[index] = updatedGrade;
+              }
+              this.editingGrade = null;
+              this.gradeEntryForm.reset();
+            }
+          },
+          error: (err) => {
+            console.error("Error updating grade:", err);
+          }
+        });
+      } else {
+        // Add new grade
+        const newGrade: Grade = {
+          ...formValue,
+          id: '',
+          teacherId: teacherId,
+          gradedDate: new Date(formValue.gradedDate)
+        };
+        
+        this.teacherService.addGrade(newGrade).subscribe({
+          next: (success) => {
+            if (success) {
+              // Reload grades after successful addition
+              this.loadRecentGrades(teacherId);
+              this.gradeEntryForm.reset();
+            }
+          },
+          error: (err) => {
+            console.error("Error adding grade:", err);
+          }
+        });
       }
-      
-      this.gradeEntryForm.reset();
     }
   }
   
-
-  generateUniqueId(): number {
-    return this.recentGrades.length > 0 
-      ? Math.max(...this.recentGrades.map(g => g.id || 0)) + 1 
-      : 1;
-  }
-  
-  
-  editGrade(grade: GradeEntry) {
+  editGrade(grade: Grade) {
     this.editingGrade = grade;
     
-
     this.gradeEntryForm.patchValue({
       studentId: grade.studentId,
       courseId: grade.courseId,
       assignmentName: grade.assignmentName,
       score: grade.score,
-      maxScore: grade.maxScore,
-      gradedDate: grade.gradedDate.toISOString().split('T')[0] 
+      maxGrade: grade.maxGrade,
+      gradedDate: grade.gradedDate instanceof Date 
+        ? grade.gradedDate.toISOString().split('T')[0] 
+        : new Date(grade.gradedDate).toISOString().split('T')[0]
     });
   }
   
- 
-  deleteGrade(grade: GradeEntry) {
-    const confirmDelete = confirm(`Are you sure you want to delete the grade for ${this.getStudentName(grade.studentId)} in ${this.getCourseName(grade.courseId)}?`);
+  deleteGrade(grade: Grade) {
+    const studentName = this.getStudentName(grade.studentId);
+    const courseName = this.getCourseName(grade.courseId);
+    const confirmDelete = confirm(`Are you sure you want to delete the grade for ${studentName} in ${courseName}?`);
     
     if (confirmDelete) {
-      this.recentGrades = this.recentGrades.filter(g => g.id !== grade.id);
-      
-
-      if (this.editingGrade?.id === grade.id) {
-        this.editingGrade = null;
-        this.gradeEntryForm.reset();
-      }
+      this.teacherService.deleteGrade(grade.id).subscribe({
+        next: (success) => {
+          if (success) {
+            this.recentGrades = this.recentGrades.filter(g => g.id !== grade.id);
+            
+            if (this.editingGrade?.id === grade.id) {
+              this.editingGrade = null;
+              this.gradeEntryForm.reset();
+            }
+          }
+        },
+        error: (err) => {
+          console.error("Error deleting grade:", err);
+        }
+      });
     }
   }
   
-
-  getStudentName(studentId: number): string {
+  getStudentName(studentId: string): string {
     const student = this.students.find(s => s.id === studentId);
-    return student ? `${student.firstName} ${student.lastName}` : 'Unknown';
+    return student ? `${student.username}` : 'Unknown';
   }
   
-  getCourseName(courseId: number): string {
+  getCourseName(courseId: string): string {
     const course = this.courses.find(c => c.id === courseId);
     return course ? course.name : 'Unknown';
   }
   
- 
   cancelEdit() {
     this.editingGrade = null;
     this.gradeEntryForm.reset();

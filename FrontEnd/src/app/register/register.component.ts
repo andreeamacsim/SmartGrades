@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Student } from '../models/student';
+import { StudentService } from '../services/student.service';
+import { TeacherService } from '../services/teacher.service';
 
 @Component({
   selector: 'app-register',
@@ -20,14 +23,14 @@ export class RegisterComponent {
   registerMessage: string = '';
   isLoading: boolean = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private studentService: StudentService, private teacherService: TeacherService) { }
 
   onRegister() {
-   
+
     this.errorMessage = '';
     this.registerMessage = '';
 
-  
+
     if (!this.username || !this.email || !this.password || !this.confirmPassword) {
       this.errorMessage = 'Please fill in all fields';
       return;
@@ -40,7 +43,7 @@ export class RegisterComponent {
       return;
     }
 
-  
+
     if (this.password !== this.confirmPassword) {
       this.errorMessage = 'Passwords do not match';
       return;
@@ -50,31 +53,43 @@ export class RegisterComponent {
       this.errorMessage = 'Password must be at least 8 characters long';
       return;
     }
+    if (this.userType === 'student') {
+      this.studentService.registerStudent(this.username, this.password, this.email).subscribe({
+        next: (results) => {
+          if (results) {
+            this.registerMessage = `Student account created successfully for ${this.username}! Redirecting to login...`;
+            setTimeout(() => {
+              this.router.navigate(['/login']);
+            }, 2000);
+          } else {
+            this.errorMessage = 'Registration failed. Please try again.';
+          }
+        },
+        error: () => {
+          this.errorMessage = 'An error occurred during registration. Please try again later.';
+        }
+      });
+    } else if (this.userType === 'teacher') {
+      this.teacherService.registerTeacher(this.username, this.password, this.email).subscribe({
+        next: (results) => {
+          if (results) {
+            this.registerMessage = `Teacher account created successfully for ${this.username}! Redirecting to login...`;
+            setTimeout(() => {
+              this.router.navigate(['/login']);
+            }, 2000);
+          } else {
+            this.errorMessage = 'Registration failed. Please try again.';
+          }
+        },
+        error: () => {
+          this.errorMessage = 'An error occurred during registration. Please try again later.';
+        }
+      });
+    }
 
-    // Simulate registration process --- dummy simulation NEED TO BE CHANGED WITH BACKEND
-    this.isLoading = true;
-    this.registerMessage = `Creating ${this.userType} account for ${this.username}...`;
-
-   
-    setTimeout(() => {
-      
-      if (this.username.length >= 3) {
-       
-        this.registerMessage = `${this.userType.charAt(0).toUpperCase() + this.userType.slice(1)} account created successfully for ${this.username}! Redirecting to login...`;
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 2000);
-      } else {
-        
-        this.errorMessage = 'Registration failed. Please try again.';
-        this.registerMessage = '';
-      }
-
-      this.isLoading = false;
-    }, 2000); 
   }
 
- 
+
   toggleUserType(type: 'student' | 'teacher') {
     this.userType = type;
   }

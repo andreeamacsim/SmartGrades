@@ -18,7 +18,7 @@
             <select id="studentId" formControlName="studentId" class="form-select" style="margin-bottom: 5%;">
               <option value="">Select a student</option>
               <option *ngFor="let student of students" [value]="student.id">
-                {{ student.firstName }} {{ student.lastName }}
+                {{ student.username }}
               </option>
             </select>
           </div>
@@ -46,8 +46,8 @@
           </div>
           
           <div class="form-column">
-            <label class="form-label" for="maxScore">Max score</label>
-            <input type="number" id="maxScore" formControlName="maxScore" class="form-input" style="width:90%">
+            <label class="form-label" for="maxGrade">Max score</label>
+            <input type="number" id="maxGrade" formControlName="maxGrade" class="form-input" style="width:90%">
           </div>
         </div>
         
@@ -86,7 +86,7 @@
             <td>{{ getStudentName(grade.studentId) }}</td>
             <td>{{ getCourseName(grade.courseId) }}</td>
             <td>{{ grade.assignmentName }}</td>
-            <td>{{ grade.score }}/{{ grade.maxScore }}</td>
+            <td>{{ grade.score }}/{{ grade.maxGrade }}</td>
             <td>{{ grade.gradedDate | date:'mediumDate' }}</td>
             <td>
               <div class="action-buttons">
