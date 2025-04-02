@@ -33,6 +33,7 @@ builder.Services.AddSingleton<ICourseCollectionService, CourseCollectionService>
 builder.Services.AddSingleton<IGradeCollectionService, GradeCollectionService>();
 builder.Services.AddSingleton<ITeacherCollectionService, TeacherCollectionService>();
 builder.Services.AddSingleton<IStudentCollectionService, StudentCollectionService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 var app = builder.Build();
 app.UseCors("CorsPolicy");
 

@@ -10,6 +10,10 @@
 
         public string Password { get; set; }
 
+        public string? ResetPasswordToken { get; set; }
+
+        public DateTime ResetPasswordExpiry { get; set; }
+
         public List<string> CourseIds { get; set; } = new List<string>();
     }
 }

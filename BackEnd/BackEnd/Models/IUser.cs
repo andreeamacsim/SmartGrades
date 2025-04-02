@@ -8,9 +8,10 @@ namespace BackEnd.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         string Id { get; set; }
-
         string Username { get; set; }
         string Email { get; set; }
         string Password { get; set; }
+        public string? ResetPasswordToken { get; set; }
+        public DateTime ResetPasswordExpiry { get; set; }
     }
 }
