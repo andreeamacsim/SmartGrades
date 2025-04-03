@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using BackEnd.Service;
 using BackEnd.Settings;
@@ -9,10 +10,8 @@ using MongoDB.Bson.Serialization.Serializers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
@@ -23,12 +22,17 @@ builder.Services.AddCors(options =>
                                   policy.WithOrigins("http://localhost:4200")
                                   .AllowAnyHeader()
                                   .AllowAnyMethod()
-                                  .AllowCredentials();
+                                  .AllowCredentials()
+                                  .WithExposedHeaders("Authorization");
 
                               });
 });
+
 BsonSerializer.TryRegisterSerializer(new GuidSerializer(MongoDB.Bson.GuidRepresentation.Standard));
+
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection(nameof(MongoDbSettings)));
+
+
 builder.Services.AddSingleton<IMongoDbSettings>(sp =>
     sp.GetRequiredService<IOptions<MongoDbSettings>>().Value);
 builder.Services.AddSingleton<ICourseCollectionService, CourseCollectionService>();
@@ -36,6 +40,9 @@ builder.Services.AddSingleton<IGradeCollectionService, GradeCollectionService>()
 builder.Services.AddSingleton<ITeacherCollectionService, TeacherCollectionService>();
 builder.Services.AddSingleton<IStudentCollectionService, StudentCollectionService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+
+
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -47,13 +54,15 @@ builder.Services.AddAuthentication(x =>
     x.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("yourkey")),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("JxSpW.NmvsHpgstntUYSMP2065.Fiutnbriu..6895")),
         ValidateAudience = false,
         ValidateIssuer = false,
     };
 });
+
 var app = builder.Build();
 app.UseCors("CorsPolicy");
+app.UseRouting();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -65,7 +74,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+
 app.UseAuthorization();
+
 
 app.MapControllers();
 

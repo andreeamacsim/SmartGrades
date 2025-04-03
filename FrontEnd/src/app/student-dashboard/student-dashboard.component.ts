@@ -23,21 +23,17 @@ export class StudentDashboardComponent implements OnInit {
 
   courseGrades: CourseGrades[] = [];
   overallGPA: number = 0;
-
-  constructor(private gradeService: GradeService, private router: Router,private authService:AuthService) {}
+  private studentId:string;
+  constructor(private gradeService: GradeService, private router: Router,protected authService:AuthService) {
+    this.studentId=this.authService.connectedUserId;
+  }
 
   ngOnInit(): void {
     this.loadStudentGrades();
   }
   loadStudentGrades() {
-    const userId = this.authService.authenticatedUser?.id;
-    
-    if (!userId) {
-      console.error('User ID is undefined. Cannot fetch grades.');
-      return;
-    }
   
-    this.gradeService.getStudentGrades(userId).subscribe({
+    this.gradeService.getStudentGrades(this.studentId).subscribe({
       next: (grades: Grade[]) => {
         this.processGrades(grades);
       },

@@ -8,12 +8,13 @@ namespace BackEnd.Helpers
 {
     public class Token
     {
-        public static string CreateJWTToken(IUser user)
+        public static string CreateJWTToken(IUser user,string role)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes("JxSpW.NmvsHpgstntUYSMP2065.Fiutnbriu..6895");
             var identity = new ClaimsIdentity(new Claim[]{
-                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
+                new Claim(ClaimTypes.Role,role),
             });
 
             var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);

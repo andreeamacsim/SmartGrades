@@ -22,4 +22,7 @@ export class StudentService {
     }
     return this.httpClient.post<boolean>(this.baseUrl,student);
   }
+  public getStudentById(id:string){
+    return this.httpClient.get<Student>(`${this.baseUrl}/id?id=${id}`);
+  }
 }

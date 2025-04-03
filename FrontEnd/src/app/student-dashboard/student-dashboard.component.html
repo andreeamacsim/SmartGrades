@@ -8,6 +8,9 @@
       </svg>
       Student profile
     </button>
+    <button class="profile-button" (click)="this.authService.logout()">
+      Logout
+    </button>
   </div>
     <div class="overall-summary">
       <h2>Overall GPA: {{ overallGPA | number:'1.2-2' }}%</h2>
