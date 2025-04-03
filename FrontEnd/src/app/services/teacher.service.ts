@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Teacher } from '../models/teacher';
 import { Grade } from '../models/grade';
+import { ResetPassword } from '../models/reset-password';
+import { ResetPasswordResponse } from '../models/reset-password-response';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +42,20 @@ export class TeacherService {
   public deleteGrade(gradeId: string): Observable<boolean> {
     return this.httpClient.delete<boolean>(`${this.baseUrlGrade}/delete-grade/${gradeId}`);
   }
+<<<<<<< Updated upstream
   public getTeacherById(id: string) {
     return this.httpClient.get<Teacher>(`${this.baseUrl}/id?id=${id}`);
   }
+=======
+
+  public sendResetEmail(email: string): Observable<any> {
+      const url = `${this.baseUrl}/send-reset-email/${email}`;
+      return this.httpClient.post(url, {});
+    }
+  
+    public resetPassword(resetPasswordObj: ResetPassword): Observable<ResetPasswordResponse> {
+      const url = `${this.baseUrl}/reset-password`;
+      return this.httpClient.post<ResetPasswordResponse>(url, resetPasswordObj);
+    }
+>>>>>>> Stashed changes
 }
