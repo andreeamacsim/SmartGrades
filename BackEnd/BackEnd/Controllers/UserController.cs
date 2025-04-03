@@ -1,4 +1,5 @@
-﻿using BackEnd.Models;
+﻿using BackEnd.Helpers;
+using BackEnd.Models;
 using BackEnd.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -66,9 +67,14 @@ namespace BackEnd.Controllers
             var user = await studentCollectionService.VerifyAccount(student.Username, student.Password);
             if (user != null)
             {
-                return Ok(user);
+                user.Token = Token.CreateJWTToken(user);
+                return Ok(new
+                {
+                    Token = user.Token,
+                    Message = "Login succesed!"
+                });
             }
-            return NotFound(user);
+            return NotFound(new { Message = "Username or password is incorect" });
         }
 
         /// <summary>
@@ -84,9 +90,14 @@ namespace BackEnd.Controllers
             var user = await teacherCollectionService.VerifyAccount(teacher.Username, teacher.Password);
             if (user != null)
             {
-                return Ok(user);
+                user.Token = Token.CreateJWTToken(user);
+                return Ok(new
+                {
+                    Token = user.Token,
+                    Message = "Login succesed!"
+                });
             }
-            return NotFound(user);
+            return NotFound(new { Message = "Username or password is incorect" });
         }
 
         /// <summary>
