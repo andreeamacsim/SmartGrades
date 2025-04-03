@@ -9,7 +9,7 @@ import { Grade } from '../models/grade';
 })
 export class TeacherService {
   baseUrl = 'https://localhost:7261/teacher';
-  baseUrlGrade='https://localhost:7261/grade'
+  baseUrlGrade = 'https://localhost:7261/grade'
 
 
   constructor(private httpClient: HttpClient) { }
@@ -20,25 +20,27 @@ export class TeacherService {
       username: username,
       password: password,
       email: email,
-      courseIds:[]
+      courseIds: []
     };
     return this.httpClient.post<boolean>(this.baseUrl, teacher);
   }
-  public addGrade(grade:Grade)
-  {
+  public addGrade(grade: Grade) {
     console.log(grade);
-    return this.httpClient.post<boolean>(`${this.baseUrlGrade}/add-grade`,grade);
+    return this.httpClient.post<boolean>(`${this.baseUrlGrade}/add-grade`, grade);
   }
 
   public getTeacherGrades(teacherId: string): Observable<Grade[]> {
     return this.httpClient.get<Grade[]>(`${this.baseUrlGrade}/teacher/${teacherId}`);
   }
-  
+
   public updateGrade(grade: Grade): Observable<boolean> {
     return this.httpClient.put<boolean>(`${this.baseUrlGrade}/update-grade`, grade);
   }
-  
+
   public deleteGrade(gradeId: string): Observable<boolean> {
     return this.httpClient.delete<boolean>(`${this.baseUrlGrade}/delete-grade/${gradeId}`);
+  }
+  public getTeacherById(id: string) {
+    return this.httpClient.get<Teacher>(`${this.baseUrl}/id?id=${id}`);
   }
 }

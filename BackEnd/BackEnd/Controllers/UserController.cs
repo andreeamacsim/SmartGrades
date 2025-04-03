@@ -72,7 +72,7 @@ namespace BackEnd.Controllers
             var user = await studentCollectionService.VerifyAccount(student.Username, student.Password);
             if (user != null)
             {
-                user.Token = Token.CreateJWTToken(user);
+                user.Token = Token.CreateJWTToken(user,"student");
                 return Ok(new
                 {
                     Token = user.Token,
@@ -96,7 +96,7 @@ namespace BackEnd.Controllers
             var user = await teacherCollectionService.VerifyAccount(teacher.Username, teacher.Password);
             if (user != null)
             {
-                user.Token = Token.CreateJWTToken(user);
+                user.Token = Token.CreateJWTToken(user,"teacher");
                 return Ok(new
                 {
                     Token = user.Token,
@@ -131,6 +131,44 @@ namespace BackEnd.Controllers
             var results = await studentCollectionService.Update(student.Id, student);
             if (results)
                 return Ok(results);
+            return BadRequest();
+        }
+        /// <summary>
+        /// Retrieves a student by their unique identifier.
+        /// </summary>
+        /// <param name="id">The ID of the student.</param>
+        /// <returns>
+        /// Returns HTTP 200 OK with the student data if found.
+        /// Returns HTTP 400 Bad Request if no student is found.
+        /// </returns>
+        [HttpGet("/student/id")]
+        public async Task<IActionResult> GetStudentById(string id)
+        {
+            var results = await studentCollectionService.GetById(id);
+
+            if (results != null)
+                return Ok(results);
+
+            return BadRequest();
+        }
+
+        /// <summary>
+        /// Retrieves a teacher by their unique identifier.
+        /// </summary>
+        /// <param name="id">The ID of the teacher.</param>
+        /// <returns>
+        /// Returns HTTP 200 OK with the teacher data if found.
+        /// Returns HTTP 400 Bad Request if no teacher is found.
+        /// </returns>
+        [AllowAnonymous]
+        [HttpGet("/teacher/id")]
+        public async Task<IActionResult> GetTeacherById(string id)
+        {
+            var results = await teacherCollectionService.GetById(id);
+
+            if (results != null)
+                return Ok(results);
+
             return BadRequest();
         }
     }

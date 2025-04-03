@@ -25,13 +25,15 @@ export class TeacherDashboardComponent implements OnInit {
   courses: Course[] = [];
   recentGrades: Grade[] = [];
   editingGrade: Grade | null = null;
+  private teacherId='';
   
   constructor(
     private fb: FormBuilder,
     private teacherService: TeacherService,
     private courseService: CourseService,
-    private authService: AuthService
+    protected authService: AuthService
   ) {
+    this.teacherId=this.authService.connectedUserId;
     this.gradeEntryForm = this.fb.group({
       studentId: ['', Validators.required],
       courseId: ['', Validators.required],
@@ -43,14 +45,8 @@ export class TeacherDashboardComponent implements OnInit {
   }
   
   ngOnInit(): void {
-    const teacherId = this.authService.authenticatedUser?.id;
-    if (!teacherId) {
-      console.error("Teacher ID is undefined.");
-      return;
-    }
-    
     // Load teacher's courses
-    this.courseService.getTeacherCourses(teacherId).subscribe({
+    this.courseService.getTeacherCourses(this.teacherId).subscribe({
       next: courses => {
         this.courses = courses;
         console.log(courses);
@@ -61,7 +57,7 @@ export class TeacherDashboardComponent implements OnInit {
     });
     
     // Load teacher's recent grades
-    this.loadRecentGrades(teacherId);
+    this.loadRecentGrades(this.teacherId);
     
     // Subscribe to course changes to load students
     this.gradeEntryForm.get('courseId')?.valueChanges.subscribe((courseId) => {
@@ -79,7 +75,7 @@ export class TeacherDashboardComponent implements OnInit {
   }
   
   loadRecentGrades(teacherId: string): void {
-    this.teacherService.getTeacherGrades(teacherId).subscribe({
+    this.teacherService.getTeacherGrades(this.teacherId).subscribe({
       next: (grades) => {
         this.recentGrades = grades;
       },
@@ -92,12 +88,6 @@ export class TeacherDashboardComponent implements OnInit {
   onSubmit() {
     if (this.gradeEntryForm.valid) {
       const formValue = this.gradeEntryForm.value;
-      const teacherId = this.authService.authenticatedUser?.id;
-      
-      if (!teacherId) {
-        console.error("Teacher ID is undefined.");
-        return;
-      }
       
       if (this.editingGrade) {
         // Update existing grade
@@ -127,7 +117,7 @@ export class TeacherDashboardComponent implements OnInit {
         const newGrade: Grade = {
           ...formValue,
           id: '',
-          teacherId: teacherId,
+          teacherId: this.teacherId,
           gradedDate: new Date(formValue.gradedDate)
         };
         
@@ -135,7 +125,7 @@ export class TeacherDashboardComponent implements OnInit {
           next: (success) => {
             if (success) {
               // Reload grades after successful addition
-              this.loadRecentGrades(teacherId);
+              this.loadRecentGrades(this.teacherId);
               this.gradeEntryForm.reset();
             }
           },
