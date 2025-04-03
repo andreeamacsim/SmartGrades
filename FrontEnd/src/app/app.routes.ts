@@ -16,19 +16,11 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent},
-<<<<<<< Updated upstream
+  { path: 'reset-password', component: ResetPasswordComponent},
   { path: 'student-dashboard', component:StudentDashboardComponent,canActivate:[authGuard]},
   { path: 'teacher-dashboard', component:TeacherDashboardComponent,canActivate:[authGuard]},
   { path: 'class-management', component: ClassManagementComponent ,canActivate:[authGuard]},
   { path: 'teacher-profile', component: TeacherProfileComponent,canActivate:[authGuard]},
   { path: 'student-profile', component:StudentProfileComponent ,canActivate:[authGuard]}
-=======
-  { path: 'reset-password', component: ResetPasswordComponent},
-  { path: 'student-dashboard', component:StudentDashboardComponent},
-  { path: 'teacher-dashboard', component:TeacherDashboardComponent},
-  { path: 'class-management', component: ClassManagementComponent },
-  { path: 'teacher-profile', component: TeacherProfileComponent },
-  { path: 'student-profile', component:StudentProfileComponent}
->>>>>>> Stashed changes
 
 ];
