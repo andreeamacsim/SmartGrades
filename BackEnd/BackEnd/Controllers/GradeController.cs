@@ -1,5 +1,6 @@
 ﻿using BackEnd.Models;
 using BackEnd.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd.Controllers
@@ -7,6 +8,7 @@ namespace BackEnd.Controllers
     /// <summary>
     /// Controller for managing grades.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("grade")]
     public class GradeController : ControllerBase

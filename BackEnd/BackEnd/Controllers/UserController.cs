@@ -1,6 +1,7 @@
 ﻿using BackEnd.Helpers;
 using BackEnd.Models;
 using BackEnd.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd.Controllers
@@ -8,6 +9,7 @@ namespace BackEnd.Controllers
     // <summary>
     /// Controller for managing user-related operations.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
@@ -31,6 +33,7 @@ namespace BackEnd.Controllers
         /// </summary>
         /// <param name="student">The student to create.</param>
         /// <returns>Returns an HTTP response indicating success or failure.</returns>
+        [AllowAnonymous]
         [HttpPost("/student")]
         public async Task<IActionResult> CreateUser([FromBody] Student student)
         {
@@ -45,6 +48,7 @@ namespace BackEnd.Controllers
         /// </summary>
         /// <param name="teacher">The teacher to create.</param>
         /// <returns>Returns an HTTP response indicating success or failure.</returns>
+        [AllowAnonymous]
         [HttpPost("/teacher")]
         public async Task<IActionResult> CreateTeacher([FromBody] Teacher teacher)
         {
@@ -59,8 +63,9 @@ namespace BackEnd.Controllers
         /// </summary>
         /// <param name="student">The student's credentials.</param>
         /// <returns>Returns the student data if authentication is successful, otherwise returns NotFound.</returns>
+        [AllowAnonymous]
         [HttpPost("/student/authenticate")]
-        public async Task<IActionResult> AuthenitcateStudent([FromBody] VerifyUser student)
+        public async Task<IActionResult> AuthenticateStudent([FromBody] VerifyUser student)
         {
             if (student == null)
                 return BadRequest();
@@ -82,8 +87,9 @@ namespace BackEnd.Controllers
         /// </summary>
         /// <param name="teacher">The teacher's credentials.</param>
         /// <returns>Returns the teacher data if authentication is successful, otherwise returns NotFound.</returns>
+        [AllowAnonymous]
         [HttpPost("/teacher/authenticate")]
-        public async Task<IActionResult> AuthenitcateTeacher([FromBody] VerifyUser teacher)
+        public async Task<IActionResult> AuthenticateTeacher([FromBody] VerifyUser teacher)
         {
             if (teacher == null)
                 return BadRequest();

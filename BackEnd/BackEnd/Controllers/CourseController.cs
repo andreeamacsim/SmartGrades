@@ -1,11 +1,13 @@
 ﻿using BackEnd.Models;
 using BackEnd.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd.Controllers
 { /// <summary>
   /// Controller for managing courses.
   /// </summary>
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class CourseController : ControllerBase
