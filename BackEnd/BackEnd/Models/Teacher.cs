@@ -15,5 +15,6 @@
         public DateTime ResetPasswordExpiry { get; set; }
 
         public List<string> CourseIds { get; set; } = new List<string>();
+        public string Token { get; set ; }
     }
 }

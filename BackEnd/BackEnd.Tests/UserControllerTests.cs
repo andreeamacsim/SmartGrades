@@ -9,6 +9,8 @@ using System.Linq;
 using BackEnd.Settings;
 using BackEnd.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace BackEnd.Tests
 {
@@ -42,28 +44,35 @@ namespace BackEnd.Tests
         }
 
         [Fact]
-        public async Task AuthenitcateStudent_ReturnsNotFound_WhenCredentialsAreInvalid()
+        public async Task AuthenticateStudent_ReturnsNotFound_WhenCredentialsAreInvalid()
         {
             // Arrange
             var mockStudentService = new Mock<IStudentCollectionService>();
             var mockTeacherService = new Mock<ITeacherCollectionService>();
+
             var studentCredentials = new VerifyUser
             {
                 Username = "student1",
                 Password = "wrongpassword"
             };
 
-            // Simulăm autentificarea care nu găsește studentul
-            mockStudentService.Setup(s => s.VerifyAccount(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync((Student)null);
+            // Simulăm autentificarea care nu găsește studentul (returnează null)
+            mockStudentService.Setup(s => s.VerifyAccount(It.IsAny<string>(), It.IsAny<string>()))
+                              .ReturnsAsync((Student)null);
 
             var controller = new UserController(mockStudentService.Object, mockTeacherService.Object);
-
             // Act
-            var result = await controller.AuthenitcateStudent(studentCredentials);
-
-            // Assert
+            var result = await controller.AuthenticateStudent(studentCredentials);
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Null(notFoundResult.Value);
+            var jsonResult = JsonConvert.SerializeObject(notFoundResult.Value);
+            // JSON așteptat
+            var expectedJson = JsonConvert.SerializeObject(new
+            {
+                Message = "Username or password is incorect"
+            });
+
+            // Comparăm JSON-urile
+            Assert.Equal(expectedJson, jsonResult);
         }
     }
 }
