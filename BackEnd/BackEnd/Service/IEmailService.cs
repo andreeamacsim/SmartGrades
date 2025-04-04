@@ -4,6 +4,6 @@ namespace BackEnd.Service
 {
     public interface IEmailService
     {
-        void SendEmail(EmailModel email);
+        Task SendEmail(EmailModel email);
     }
 }

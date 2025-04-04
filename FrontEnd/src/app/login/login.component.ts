@@ -80,6 +80,7 @@ export class LoginComponent {
       }
     });
   }
+  
   toggleUserType(type: 'student' | 'teacher') {
     this.userType = type;
   }

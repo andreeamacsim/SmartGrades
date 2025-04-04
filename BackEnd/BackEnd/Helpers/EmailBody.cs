@@ -15,7 +15,7 @@
                             <hr>
                             <p>You're receiving this email because you requested a password reset for your Smart Grades account.</p>
                             <p>Click the button below to reset your password. If you didn't request a password reset, you can ignore this email.</p>
-                            <a href=""http://localhost:4200/forgot-password?email={email}&code={emailToken}"" target=""_blank"" style=""background-color: #0d6efd;padding:10px;border:none 
+                            <a href=""http://localhost:4200/reset-password?email={email}&code={emailToken}"" target=""_blank"" style=""background-color: #0d6efd;padding:10px;border:none 
                             color: white; border-radius:4px;display:block;margin:0 auto;width:50%;text-align:center;padding:10px;text-decoration:none;"">Reset Password</a>
 
                             <p>Kindest regards,<br><br>Smart Grades Team</p>

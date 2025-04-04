@@ -8,7 +8,10 @@ using System.Security.Cryptography;
 
 namespace BackEnd.Controllers
 {
-    [Route("[controller]")]
+    // <summary>
+    // Controller for managing student-related operations, including password reset functionality.
+    // </summary>
+    [Route("student")]
     [ApiController]
     public class StudentController : ControllerBase
     {
@@ -16,6 +19,12 @@ namespace BackEnd.Controllers
         private readonly IConfiguration _config;
         private readonly IEmailService _emailService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StudentController"/> class.
+        /// </summary>
+        /// <param name="studentService">Service for managing students.</param>
+        /// <param name="configuration">Configuration settings.</param>
+        /// <param name="emailService">Service for sending emails.</param>
         public StudentController(IStudentCollectionService studentService, IConfiguration configuration, IEmailService emailService)
         {
             _studentService = studentService;
@@ -23,7 +32,12 @@ namespace BackEnd.Controllers
             _emailService = emailService;
         }
 
-        [HttpPost("/student/send-reset-email/{email}")]
+        /// <summary>
+        /// Sends a password reset email to the student.
+        /// </summary>
+        /// <param name="email">The email address of the student requesting the reset.</param>
+        /// <returns>Returns an HTTP response indicating success or failure of the email sending.</returns>
+        [HttpPost("send-reset-email/{email}")]
         public async Task<IActionResult> SendEmail(string email)
         {
             var studentList = await _studentService.GetAll();
@@ -38,7 +52,11 @@ namespace BackEnd.Controllers
             }
 
             var tokenBytes = RandomNumberGenerator.GetBytes(64);
-            var emailToken = Convert.ToBase64String(tokenBytes);
+            var emailToken = Convert.ToBase64String(tokenBytes)
+                .Replace("+", "-")
+                .Replace("/", "_")
+                .TrimEnd('=');
+
             student.ResetPasswordToken = emailToken;
             student.ResetPasswordExpiry = DateTime.UtcNow.AddMinutes(15);
 
@@ -55,10 +73,18 @@ namespace BackEnd.Controllers
             });
         }
 
-        [HttpPost("/student/reset-password")]
+        /// <summary>
+        /// Resets the student's password using the reset token.
+        /// </summary>
+        /// <param name="resetPasswordDto">DTO containing the reset token, new password, and student's email.</param>
+        /// <returns>Returns an HTTP response indicating success or failure of the password reset process.</returns>
+        [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
         {
-            var newToken = resetPasswordDto.EmailToken.Replace(" ", "+");
+            var receivedToken = resetPasswordDto.EmailToken
+                .Replace("-", "+")
+                .Replace("_", "/");
+
             var studentList = await _studentService.GetAll();
             var student = studentList.FirstOrDefault(a => a.Email == resetPasswordDto.Email);
             if (student == null)
@@ -92,6 +118,5 @@ namespace BackEnd.Controllers
                 Message = "Password reset successfully"
             });
         }
-
     }
 }
