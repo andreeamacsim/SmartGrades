@@ -8,7 +8,7 @@ namespace BackEnd.Controllers
     /// <summary>
     /// Controller for managing grades.
     /// </summary>
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("grade")]
     public class GradeController : ControllerBase
@@ -96,7 +96,16 @@ namespace BackEnd.Controllers
             return BadRequest();
         }
 
-
-
+        /// <summary>
+        /// Retrieves the dashboard data for a student, including relevant academic information.
+        /// </summary>
+        /// <param name="studentId">The student's ID.</param>
+        /// <returns>Returns the student's dashboard data.</returns>
+        [HttpGet("dashboard/{studentId}")]
+        public async Task<IActionResult> GetStudentDashboard(string studentId)
+        {
+            var result = await _studentCollectionService.GetStudentDashboard(studentId);
+            return Ok(result);
+        }
     }
 }

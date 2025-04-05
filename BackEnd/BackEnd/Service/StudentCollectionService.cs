@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using BackEnd.Models;
+using BackEnd.Models.Dto;
 using BackEnd.Settings;
 using Microsoft.AspNetCore.Identity;
 using MongoDB.Driver;
@@ -145,5 +146,53 @@ namespace BackEnd.Service
             var student = (await _students.FindAsync(student => student.Username == username && student.Password == password)).FirstOrDefault();
             return student;
         }
+
+        /// <summary>
+        /// Retrieves a summarized dashboard for a specific student, including their grades per course and overall GPA.
+        /// </summary>
+        /// <param name="studentId">The ID of the student whose dashboard is to be retrieved.</param>
+        /// <returns>
+        /// A <see cref="DashboardSummaryDto"/> object containing:
+        /// - A list of courses with their associated grades and average score,
+        /// - The student's overall GPA (average of course averages).
+        /// Returns an empty list and GPA 0 if no grades are found.
+        /// </returns>
+        public async Task<DashboardSummaryDto> GetStudentDashboard(string studentId)
+        {
+            var grades = await GetGrades(studentId);
+
+            if (grades == null || !grades.Any())
+                return new DashboardSummaryDto
+                {
+                    CourseGrades = new List<CourseGradesDto>(),
+                    OverallGPA = 0
+                };
+
+            var courseGroups = grades.GroupBy(g => g.CourseId);
+
+            var courseGrades = courseGroups.Select(group =>
+            {
+                var courseGradesList = group.ToList();
+                decimal totalScore = courseGradesList.Sum(g => g.Score);
+                decimal totalMaxScore = courseGradesList.Sum(g => g.MaxGrade);
+                decimal courseAverage = totalMaxScore == 0 ? 0 : (totalScore / totalMaxScore) * 100;
+
+                return new CourseGradesDto
+                {
+                    CourseName = group.Key,
+                    Grades = courseGradesList,
+                    CourseAverage = courseAverage
+                };
+            }).ToList();
+
+            decimal overallGPA = courseGrades.Average(cg => cg.CourseAverage);
+
+            return new DashboardSummaryDto
+            {
+                CourseGrades = courseGrades,
+                OverallGPA = overallGPA
+            };
+        }
+
     }
 }

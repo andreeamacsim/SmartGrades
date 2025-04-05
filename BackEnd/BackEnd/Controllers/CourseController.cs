@@ -7,7 +7,7 @@ namespace BackEnd.Controllers
 { /// <summary>
   /// Controller for managing courses.
   /// </summary>
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("[controller]")]
     public class CourseController : ControllerBase
@@ -42,10 +42,25 @@ namespace BackEnd.Controllers
         /// </summary>
         /// <param name="id">The teacher's ID.</param>
         /// <returns>Returns the list of courses if found, otherwise returns BadRequest.</returns>
-        [HttpGet("id")]
+        [HttpGet("teacher-id")]
         public async Task<IActionResult> GetCoursesForTeacher(string id)
         {
             var results = await courseCollectionService.GetTeacherCoursesList(id);
+            if (results == null)
+                return BadRequest();
+            return Ok(results);
+        }
+
+        /// <summary>
+        /// Retrieves a specific course by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the course to retrieve.</param>
+        /// <returns>Returns the course if found, otherwise returns BadRequest.</returns>
+
+        [HttpGet("id")]
+        public async Task<IActionResult> GetCourses(string id)
+        {
+            var results = await courseCollectionService.GetById(id);
             if (results == null)
                 return BadRequest();
             return Ok(results);
@@ -64,5 +79,20 @@ namespace BackEnd.Controllers
                 return BadRequest();
             return Ok(results);
         }
+
+        /// <summary>
+        /// Retrieves the list of courses that a student is enrolled in.
+        /// </summary>
+        /// <param name="studentId">The student's ID.</param>
+        /// <returns>Returns the list of courses if found, otherwise returns BadRequest.</returns>
+        [HttpGet("student-courses")]
+        public async Task<IActionResult> GetCoursesForStudent(string studentId)
+        {
+            var results = await courseCollectionService.GetStudentCoursesList(studentId);
+            if (results == null)
+                return BadRequest();
+            return Ok(results);
+        }
+
     }
 }

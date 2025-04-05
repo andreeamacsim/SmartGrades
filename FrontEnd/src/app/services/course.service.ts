@@ -12,10 +12,13 @@ export class CourseService {
    }
    getTeacherCourses(teacherId:string)
    {
-    return this.httpClient.get<Course[]>(`${this.basesurl}/id?id=${teacherId}`);
+    return this.httpClient.get<Course[]>(`${this.basesurl}/teacher-id?id=${teacherId}`);
    }
    getStudentsFromCourse(courseId:string)
    {
     return this.httpClient.get<Student[]>(`${this.basesurl}/students-from-course?courseId=${courseId}`);
    }
-}
+   getStudentCourses(studentId: string) {
+    return this.httpClient.get<Course[]>(`${this.basesurl}/student-courses?studentId=${studentId}`);
+  }
+} 

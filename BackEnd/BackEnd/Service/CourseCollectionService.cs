@@ -146,6 +146,20 @@ namespace BackEnd.Service
             var result = await _courses.ReplaceOneAsync(course => course.Id == id, entity);
             return result.IsAcknowledged && result.ModifiedCount > 0;
         }
+
+        /// <summary>
+        /// Retrieves a list of courses that a specific student is enrolled in.
+        /// </summary>
+        /// <param name="studentId">The ID of the student.</param>
+        /// <returns>A list of courses in which the student is enrolled.</returns>
+        public async Task<List<Course>> GetStudentCoursesList(string studentId)
+        {
+            // Fetch all courses from the collection
+            var allCourses = await _courses.Find(_ => true).ToListAsync();
+
+            // Filter the courses that the student is enrolled in
+            return allCourses.Where(course => course.Students.Any(student => student.Id == studentId)).ToList();
+        }
     }
 }
 

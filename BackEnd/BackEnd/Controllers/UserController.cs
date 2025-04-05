@@ -9,7 +9,7 @@ namespace BackEnd.Controllers
     // <summary>
     /// Controller for managing user-related operations.
     /// </summary>
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase

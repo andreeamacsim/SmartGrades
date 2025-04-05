@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core'; 
 import { CommonModule } from '@angular/common'; 
 import { GradeService } from '../services/grade.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { Grade } from '../models/grade';
-
+import { CourseService } from '../services/course.service';
+import { Course } from '../models/course'; // Import Course model
 
 interface CourseGrades {
   courseName: string;
@@ -17,22 +18,41 @@ interface CourseGrades {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './student-dashboard.component.html',
-  styleUrl: './student-dashboard.component.css'
+  styleUrls: ['./student-dashboard.component.css']
 })
 export class StudentDashboardComponent implements OnInit {
 
   courseGrades: CourseGrades[] = [];
   overallGPA: number = 0;
-  private studentId:string;
-  constructor(private gradeService: GradeService, private router: Router,protected authService:AuthService) {
-    this.studentId=this.authService.connectedUserId;
+  private studentId: string;
+  courses: Course[] = [];  // New property to store student courses
+
+  constructor(
+    private gradeService: GradeService,
+    private router: Router,
+    protected authService: AuthService,
+    private courseService: CourseService // Inject CourseService
+  ) {
+    this.studentId = this.authService.connectedUserId;
   }
 
   ngOnInit(): void {
-    this.loadStudentGrades();
+    this.loadStudentCourses(); // Load courses first
   }
+
+  loadStudentCourses() {
+    this.courseService.getStudentCourses(this.studentId).subscribe({
+      next: (courses) => {
+        this.courses = courses;
+        this.loadStudentGrades(); // Then load grades
+      },
+      error: (err) => {
+        console.error('Failed to load student courses:', err);
+      }
+    });
+  }
+
   loadStudentGrades() {
-  
     this.gradeService.getStudentGrades(this.studentId).subscribe({
       next: (grades: Grade[]) => {
         this.processGrades(grades);
@@ -45,7 +65,7 @@ export class StudentDashboardComponent implements OnInit {
 
   processGrades(grades: Grade[]) {
     const courseMap = new Map<string, Grade[]>();
-    
+
     grades.forEach(grade => {
       if (!courseMap.has(grade.courseId)) {
         courseMap.set(grade.courseId, []);
@@ -53,9 +73,12 @@ export class StudentDashboardComponent implements OnInit {
       courseMap.get(grade.courseId)!.push(grade);
     });
 
-    this.courseGrades = Array.from(courseMap.entries()).map(([courseName, courseGrades]) => {
+    this.courseGrades = Array.from(courseMap.entries()).map(([courseId, courseGrades]) => {
       const courseAverage = this.calculateCourseAverage(courseGrades);
+      const courseName = this.courses.find(c => c.id === courseId)?.name || courseId;
+
       return {
+        courseId,
         courseName,
         grades: courseGrades,
         courseAverage
