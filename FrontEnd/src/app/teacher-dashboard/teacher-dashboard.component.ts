@@ -41,7 +41,7 @@ export class TeacherDashboardComponent implements OnInit {
       score: ['', [Validators.required, Validators.min(0)]],
       maxGrade: ['', [Validators.required, Validators.min(1)]],
       gradedDate: ['', Validators.required]
-    });
+    }, { validators: scoreWithinMaxValidator });
   }
   
   ngOnInit(): void {
@@ -191,3 +191,16 @@ export class TeacherDashboardComponent implements OnInit {
     this.gradeEntryForm.reset();
   }
 }
+
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+
+export const scoreWithinMaxValidator: ValidatorFn = (formGroup: AbstractControl): ValidationErrors | null => {
+  const score = formGroup.get('score')?.value;
+  const maxGrade = formGroup.get('maxGrade')?.value;
+
+  if (score !== null && maxGrade !== null && score > maxGrade) {
+    return { scoreExceedsMax: true };
+  }
+
+  return null;
+};

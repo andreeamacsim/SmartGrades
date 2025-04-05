@@ -52,6 +52,11 @@
             <input type="number" id="maxGrade" formControlName="maxGrade" class="form-input" style="width:90%">
           </div>
         </div>
+
+        <div *ngIf="gradeEntryForm.errors?.['scoreExceedsMax'] && gradeEntryForm.touched" style="color: red;">
+          Score cannot be greater than maximum grade.
+        </div>
+        <br>
         
         <div class="form-group">
           <label class="form-label" for="gradedDate">Graded date</label>
