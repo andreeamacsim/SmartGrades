@@ -27,7 +27,10 @@ export class StudentService {
   public getStudentById(id:string){
     return this.httpClient.get<Student>(`${this.baseUrl}/id?id=${id}`);
   }
-
+  public updateStudent(student:Student)
+  {
+    return this.httpClient.put<boolean>(`${this.baseUrl}`,student);
+  }
   public sendResetEmail(email: string): Observable<any> {
     const url = `${this.baseUrl}/send-reset-email/${email}`;
     return this.httpClient.post(url, {});
