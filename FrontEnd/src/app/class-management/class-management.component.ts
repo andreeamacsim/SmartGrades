@@ -2,23 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
-interface Student {
-  id: number;
-  firstName: string;
-  lastName: string;
-}
-
-interface Course {
-  id: number;
-  name: string;
-}
-
-interface ClassEnrollment {
-  id: number;
-  studentId: number;
-  courseId: number;
-}
+import { CourseService } from '../services/course.service';
+import { TeacherService } from '../services/teacher.service';
+import { AuthService } from '../services/auth.service';
+import { Course } from '../models/course';
+import { Student } from '../models/student';
+import { Teacher } from '../models/teacher';
+import { StudentService } from '../services/student.service';
 
 @Component({
   selector: 'app-class-management',
@@ -29,26 +19,20 @@ interface ClassEnrollment {
 })
 export class ClassManagementComponent implements OnInit {
 
-  
   enrollmentForm: FormGroup;
+  students: Student[] = [];
+  courses: Course[] = [];
+  private teacherId='';
+  enrolledStudentsMap: Map<string, Set<string>> = new Map();
+  selectedCourse: string | null = null;
   
-  // Dummy Data - Same as teacher dashboard for consistency
-  students: Student[] = [
-    { id: 1, firstName: 'Andreea', lastName: 'Macsim' },
-    { id: 2, firstName: 'Mihai', lastName: 'Moisescu' },
-    { id: 3, firstName: 'Claudiu', lastName: 'Rusu' }
-  ];
-  
-  courses: Course[] = [
-    { id: 1, name: 'Mathematics' },
-    { id: 2, name: 'Science' },
-    { id: 3, name: 'English Literature' }
-  ];
-  
-  classEnrollments: ClassEnrollment[] = [];
-  selectedCourse: number | null = null;
-  
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,
+              private studentService: StudentService,
+              private teacherService: TeacherService,
+              private courseService: CourseService,
+              protected authService: AuthService
+  ) {
+    this.teacherId=this.authService.connectedUserId;
     this.enrollmentForm = this.fb.group({
       studentId: ['', Validators.required],
       courseId: ['', Validators.required]
@@ -56,79 +40,146 @@ export class ClassManagementComponent implements OnInit {
   }
   
   ngOnInit(): void {
-    // Initialize with some sample enrollments
-    this.classEnrollments = [
-      { id: 1, studentId: 1, courseId: 1 },
-      { id: 2, studentId: 2, courseId: 1 },
-      { id: 3, studentId: 1, courseId: 2 }
-    ];
+    // Get the courses for the teacher
+    this.courseService.getTeacherCourses(this.teacherId).subscribe({
+      next: courses => {
+        this.courses = courses;
+        // For each course, fetch the enrolled students and populate the map
+        courses.forEach(course => {
+          // Fetch the enrolled students for the course using CourseService
+          this.courseService.getStudentsFromCourse(course.id).subscribe({
+            next: students => {
+              // Create a set of student IDs for this course
+              const studentIds = new Set<string>();
+              students.forEach(student => {
+                studentIds.add(student.id);
+              });
+              // Store the student IDs in the map with the course ID
+              this.enrolledStudentsMap.set(course.id, studentIds);
+            },
+            error: err => {
+              console.error("Error fetching students for course", course.id, err);
+            }
+          });
+        });
+      },
+      error: err => {
+        console.error("Error fetching courses:", err);
+      }
+    });
+  
+    // Get all students for other purposes (e.g., for the form)
+    this.studentService.getAllStudents().subscribe({
+      next: students => {
+        this.students = students;
+      },
+      error: err => {
+        console.error("Error fetching all students:", err);
+      }
+    });
   }
   
   onSubmit() {
+    console.log(this.enrollmentForm.valid); // Log form validity to check
     if (this.enrollmentForm.valid) {
       const formValue = this.enrollmentForm.value;
+      const studentId = formValue.studentId;
+      const courseId = formValue.courseId;
       
-      // Check if this enrollment already exists
-      const existingEnrollment = this.classEnrollments.find(
-        e => e.studentId === Number(formValue.studentId) && e.courseId === Number(formValue.courseId)
-      );
-      
-      if (existingEnrollment) {
+      // Check if this student is already enrolled in the course
+      if (this.isStudentEnrolledInCourse(studentId, courseId)) {
         alert('This student is already enrolled in this course!');
         return;
       }
-      
-      const newEnrollment: ClassEnrollment = {
-        ...formValue,
-        id: this.generateUniqueId(),
-        studentId: Number(formValue.studentId),
-        courseId: Number(formValue.courseId)
-      };
-      
-      this.classEnrollments.push(newEnrollment);
+  
+      // Now add the student to the course
+      this.addStudentToCourse(studentId, courseId);
       this.enrollmentForm.reset();
     }
   }
-  
-  generateUniqueId(): number {
-    return this.classEnrollments.length > 0 
-      ? Math.max(...this.classEnrollments.map(e => e.id)) + 1 
-      : 1;
+
+
+  isStudentEnrolledInCourse(studentId: string, courseId: string): boolean {
+    return this.enrolledStudentsMap.has(courseId) &&
+      this.enrolledStudentsMap.get(courseId)!.has(studentId);
   }
+
+  addStudentToCourse(studentId: string, courseId: string): void {
+  if (!this.enrolledStudentsMap.has(courseId)) {
+    this.enrolledStudentsMap.set(courseId, new Set());
+  }
+  this.enrolledStudentsMap.get(courseId)!.add(studentId);
+
+  // Update the enrollment in the backend via the CourseService
+  this.courseService.addStudentToCourse(studentId, courseId).subscribe({
+    next: () => {
+      console.log(`Student ${studentId} added to course ${courseId}`);
+    },
+    error: err => {
+      console.error("Error adding student to course", err);
+    }
+  });
+}
   
-  removeEnrollment(enrollment: ClassEnrollment) {
-    const confirmDelete = confirm(`Are you sure you want to remove ${this.getStudentName(enrollment.studentId)} from ${this.getCourseName(enrollment.courseId)}?`);
-    
+  removeEnrollment(studentId: string, courseId: string): void {
+    const confirmDelete = confirm(`Are you sure you want to remove ${this.getStudentName(studentId)} from ${this.getCourseName(courseId)}?`);
+  
     if (confirmDelete) {
-      this.classEnrollments = this.classEnrollments.filter(e => e.id !== enrollment.id);
+      // Remove the student from the enrolled list
+      this.enrolledStudentsMap.get(courseId)?.delete(studentId);
+  
+      // Update the database
+      this.courseService.removeStudentFromCourse(studentId, courseId).subscribe({
+        next: () => {
+          console.log(`Student ${studentId} removed from course ${courseId}`);
+        },
+        error: err => {
+          console.error("Error removing student from course", err);
+        }
+      });
     }
   }
   
-  getStudentName(studentId: number): string {
-    const student = this.students.find(s => s.id === studentId);
-    return student ? `${student.firstName} ${student.lastName}` : 'Unknown';
+  getStudentName(studentId: string): string {
+    const student = this.students.find(s => s.id === studentId);  // Compare as strings
+    return student ? student.username : 'Unknown';
   }
   
-  getCourseName(courseId: number): string {
-    const course = this.courses.find(c => c.id === courseId);
+  getCourseName(courseId: string): string {
+    // Check if a course is selected
+    if (!courseId) {
+      return 'Unknown';
+    }
+  
+    const course = this.courses.find(c => c.id === courseId); // Compare as strings
     return course ? course.name : 'Unknown';
   }
   
-  filterByCourse(courseId: number | null) {
+  
+  filterByCourse(courseId: string | null) {
     this.selectedCourse = courseId;
   }
   
-  getEnrolledStudents() {
-    if (this.selectedCourse === null) {
-      return this.classEnrollments;
-    }
-    return this.classEnrollments.filter(e => e.courseId === this.selectedCourse);
+  getAllEnrolledStudents(): Student[] {
+    const allEnrolledStudents: Student[] = [];
+  
+    // Iterate through each course in the map
+    this.enrolledStudentsMap.forEach((studentIds, courseId) => {
+      // For each student ID in the set, find the corresponding student and add them to the list
+      studentIds.forEach(studentId => {
+        const student = this.students.find(s => s.id === studentId);
+        if (student) {
+          allEnrolledStudents.push(student);
+        }
+      });
+    });
+  
+    return allEnrolledStudents;
   }
 
-
-  onCourseFilterChange(event: Event) {
+  onCourseFilterChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     const value = selectElement.value;
-    this.filterByCourse(value ? +value : null);
+    this.filterByCourse(value || null);
   }
 }

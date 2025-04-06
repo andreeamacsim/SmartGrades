@@ -94,5 +94,34 @@ namespace BackEnd.Controllers
             return Ok(results);
         }
 
+        /// <summary>
+        /// Enrolls a student in a course.
+        /// </summary>
+        /// <param name="studentId">The student's ID.</param>
+        /// <param name="courseId">The course ID.</param>
+        /// <returns>Returns Ok if the student is successfully enrolled, otherwise returns BadRequest.</returns>
+        [HttpPost("enroll/{courseId}/{studentId}")]
+        public async Task<IActionResult> EnrollStudentInCourse(string studentId, string courseId)
+        {
+            var result = await courseCollectionService.EnrollStudentInCourse(studentId, courseId);
+            if (result)
+                return Ok();
+            return BadRequest("Failed to enroll student.");
+        }
+
+        /// <summary>
+        /// Removes a student from a course.
+        /// </summary>
+        /// <param name="studentId">The student's ID.</param>
+        /// <param name="courseId">The course ID.</param>
+        /// <returns>Returns Ok if the student is successfully removed, otherwise returns BadRequest.</returns>
+        [HttpDelete("unenroll/{courseId}/{studentId}")]
+        public async Task<IActionResult> RemoveStudentFromCourse(string studentId, string courseId)
+        {
+            var result = await courseCollectionService.RemoveStudentFromCourse(studentId, courseId);
+            if (result)
+                return Ok();
+            return BadRequest("Failed to remove student.");
+        }
     }
 }

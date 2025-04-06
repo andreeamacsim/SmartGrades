@@ -160,6 +160,58 @@ namespace BackEnd.Service
             // Filter the courses that the student is enrolled in
             return allCourses.Where(course => course.Students.Any(student => student.Id == studentId)).ToList();
         }
+
+        public async Task<bool> EnrollStudentInCourse(string studentId, string courseId)
+        {
+            // Find the course by its ID
+            var course = await _courses.Find(course => course.Id == courseId).FirstOrDefaultAsync();
+            if (course == null)
+                return false; // Course doesn't exist
+
+            // Check if the student is already enrolled in the course
+            if (course.Students.Any(student => student.Id == studentId))
+                return false; // Student is already enrolled
+
+            // Ensure the Students list is initialized (if it's null)
+            if (course.Students == null)
+            {
+                course.Students = new List<Student>();
+            }
+
+            // Add the student to the course's Students list (just by Id)
+            var updateResult = await _courses.UpdateOneAsync(
+                c => c.Id == courseId,
+                Builders<Course>.Update.Push(c => c.Students, new Student { Id = studentId })
+            );
+
+            // Return whether the update was successful
+            return updateResult.IsAcknowledged && updateResult.ModifiedCount > 0;
+        }
+
+        public async Task<bool> RemoveStudentFromCourse(string studentId, string courseId)
+        {
+            // Find the course by its ID
+            var course = await _courses.Find(course => course.Id == courseId).FirstOrDefaultAsync();
+            if (course == null)
+                return false;
+
+            // Check if the student is enrolled
+            var student = course.Students.FirstOrDefault(s => s.Id == studentId);
+            if (student == null)
+                return false; // Student not found in course
+
+            // Remove the student by their ID using an update operation
+            var result = await _courses.UpdateOneAsync(
+                c => c.Id == courseId,
+                Builders<Course>.Update.PullFilter(
+                    c => c.Students,
+                    s => s.Id == studentId // Remove student with matching ID
+                )
+            );
+
+            return result.IsAcknowledged && result.ModifiedCount > 0;
+        }
+
     }
 }
 

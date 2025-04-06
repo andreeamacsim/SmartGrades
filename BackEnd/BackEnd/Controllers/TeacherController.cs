@@ -11,6 +11,7 @@ namespace BackEnd.Controllers
     // <summary>
     // Controller for managing teacher-related operations, including password reset functionality.
     // </summary>
+    //[Authorize]
     [Route("teacher")]
     [ApiController]
     public class TeacherController : ControllerBase

@@ -11,6 +11,7 @@ namespace BackEnd.Controllers
     // <summary>
     // Controller for managing student-related operations, including password reset functionality.
     // </summary>
+    //[Authorize]
     [Route("student")]
     [ApiController]
     public class StudentController : ControllerBase
@@ -118,5 +119,29 @@ namespace BackEnd.Controllers
                 Message = "Password reset successfully"
             });
         }
+
+        /// <summary>
+        /// Gets a list of all students.
+        /// </summary>
+        /// <returns>A list of students.</returns>
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<Student>>> GetAllStudents()
+        {
+            try
+            {
+                var students = await _studentService.GetAll();
+                return Ok(students);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    StatusCode = 500,
+                    Message = "An error occurred while fetching students.",
+                    Error = ex.Message
+                });
+            }
+        }
+
     }
 }
