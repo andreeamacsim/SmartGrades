@@ -2,6 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { TeacherService } from '../services/teacher.service';
+import { Teacher } from '../models/teacher';
 
 @Component({
   selector: 'app-teacher-profile',
@@ -18,19 +21,21 @@ export class TeacherProfileComponent implements OnInit {
   isLoading: boolean = false;
   errorMessage: string = '';
   successMessage: string = '';
-  userType: string = 'teacher';
-
-  constructor(private router: Router) { }
+  teahcerId:string=''
+  constructor(private router: Router,private authService:AuthService,private teacherService:TeacherService) { }
 
   ngOnInit(): void {
-    // Initialized with mock data 
-    this.username = 'teacheruser';
-    this.email = 'teacher@example.com';
+    this.authService.connectedUser$.subscribe(teacher=>{
+      if(teacher){
+      this.teahcerId=teacher.id;
+      this.username=teacher.username;
+      this.email=teacher.email;
+      this.password=teacher.password;
+      this.confirmPassword=teacher.password;
+      }
+    })
   }
 
-  toggleUserType(type: string): void {
-    this.userType = type;
-  }
 
   onUpdate(): void {
     this.isLoading = true;
@@ -47,16 +52,36 @@ export class TeacherProfileComponent implements OnInit {
       this.isLoading = false;
       return;
     }
-
-    // simulated update profile
-    setTimeout(() => {
-      this.successMessage = 'Profile updated successfully';
-      this.errorMessage = '';
-      this.isLoading = false;
-      
-      this.password = '';
-      this.confirmPassword = '';
-    }, 1000);
+    const teacher=<Teacher>{
+      id:this.teahcerId,
+      username:this.username,
+      email:this.email,
+      password:this.password,
+      courseIds:[]
+    }
+    this.teacherService.updateTeacher(teacher).subscribe({
+      next: (value)=>{
+        if(value)
+        {
+          setTimeout(() => {
+            this.isLoading = false;
+            this.successMessage = 'Profile updated successfully';
+          }, 1500);
+        }
+        else{
+          setTimeout(() => {
+            this.isLoading = false;
+            this.errorMessage = 'Profile updated failed';
+          }, 1000);
+        }
+      },
+      error:()=>{
+        setTimeout(() => {
+          this.isLoading = false;
+          this.errorMessage = 'Profile updated failed';
+        }, 1500);
+      }
+    })
   }
 
   navigateToDashboard(): void {

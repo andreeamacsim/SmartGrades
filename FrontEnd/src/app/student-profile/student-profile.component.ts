@@ -31,10 +31,12 @@ export class StudentProfileComponent implements OnInit {
   ngOnInit(): void {
     this.studentId = this.authService.connectedUserId;
     this.authService.connectedUser$.subscribe(student => {
+      if(student){
       this.username = student.username;
       this.email = student.email;
       this.password = student.password;
       this.confirmPassword = student.password;
+      }
     })
   }
 

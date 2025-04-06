@@ -45,14 +45,16 @@ export class TeacherService {
   public getTeacherById(id: string) {
     return this.httpClient.get<Teacher>(`${this.baseUrl}/id?id=${id}`);
   }
-
+  public updateTeacher(teacher:Teacher){
+    return this.httpClient.put<boolean>(this.baseUrl,teacher);
+  }
   public sendResetEmail(email: string): Observable<any> {
-      const url = `${this.baseUrl}/send-reset-email/${email}`;
-      return this.httpClient.post(url, {});
-    }
-  
-    public resetPassword(resetPasswordObj: ResetPassword): Observable<ResetPasswordResponse> {
-      const url = `${this.baseUrl}/reset-password`;
-      return this.httpClient.post<ResetPasswordResponse>(url, resetPasswordObj);
-    }
+    const url = `${this.baseUrl}/send-reset-email/${email}`;
+    return this.httpClient.post(url, {});
+  }
+
+  public resetPassword(resetPasswordObj: ResetPassword): Observable<ResetPasswordResponse> {
+    const url = `${this.baseUrl}/reset-password`;
+    return this.httpClient.post<ResetPasswordResponse>(url, resetPasswordObj);
+  }
 }
