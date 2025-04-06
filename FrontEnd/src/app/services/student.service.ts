@@ -40,4 +40,9 @@ export class StudentService {
     const url = `${this.baseUrl}/reset-password`;
     return this.httpClient.post<ResetPasswordResponse>(url, resetPasswordObj);
   }
+
+  getAllStudents(): Observable<Student[]> {
+    const url = `${this.baseUrl}/all`;
+    return this.httpClient.get<Student[]>(url);
+  }
 }

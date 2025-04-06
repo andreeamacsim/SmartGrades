@@ -24,7 +24,7 @@
             <select id="studentId" formControlName="studentId" class="form-select">
               <option value="">Select a student</option>
               <option *ngFor="let student of students" [value]="student.id">
-                {{ student.firstName }} {{ student.lastName }}
+                {{ student.username }}
               </option>
             </select>
           </div>
@@ -59,15 +59,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let enrollment of getEnrolledStudents()" class="table-row">
-              <td>{{ getStudentName(enrollment.studentId) }}</td>
-              <td>{{ getCourseName(enrollment.courseId) }}</td>
+            <tr *ngFor="let student of getAllEnrolledStudents()" class="table-row">
+              <td>{{ student.username }}</td>
+              <td>{{ getCourseName(selectedCourse) }}</td>
               <td>
-                <button class="delete-button" (click)="removeEnrollment(enrollment)">
+                <button class="delete-button" (click)="removeEnrollment(student.id, selectedCourse)">
                   Remove
                 </button>
               </td>
-            </tr>
+            </tr>                       
           </tbody>
         </table>
       </div>
