@@ -126,6 +126,9 @@ namespace BackEnd.Service
                 return false;
 
             entity.Id = id;
+            var student=await this.GetById(id);
+            entity.CourseIds=student.CourseIds;
+            entity.Grades=student.Grades;
             var results = await _students.ReplaceOneAsync(student => student.Id.ToString() == id, entity);
             if (!results.IsAcknowledged && results.ModifiedCount == 0)
             {

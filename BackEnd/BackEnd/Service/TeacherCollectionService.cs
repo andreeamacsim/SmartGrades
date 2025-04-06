@@ -114,6 +114,8 @@ namespace BackEnd.Service
                 return false;
 
             entity.Id = id;
+            var teacher=await this.GetById(id);
+            entity.CourseIds = teacher.CourseIds;
             var result = await _teachers.ReplaceOneAsync(teacher => teacher.Id == id, entity);
             return result.IsAcknowledged && result.ModifiedCount > 0;
         }
